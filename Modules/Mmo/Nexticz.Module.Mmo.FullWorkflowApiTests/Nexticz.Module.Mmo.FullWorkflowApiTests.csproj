@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Assets\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nexticz.Module.Mmo.SharedTesting\Nexticz.Module.Mmo.SharedTesting.csproj" />
+      <ProjectReference Include="..\Planning\Nexticz.Module.Mmo.Planning.Tests.Functional\Nexticz.Module.Mmo.Planning.Tests.Functional.csproj" />
+    </ItemGroup>
+
+</Project>

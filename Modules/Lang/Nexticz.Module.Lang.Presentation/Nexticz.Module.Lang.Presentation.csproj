@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Development;Production;Staging</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nexticz.Module.Lang.Application\Nexticz.Module.Lang.Application.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Lang.Infrastructure\Nexticz.Module.Lang.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

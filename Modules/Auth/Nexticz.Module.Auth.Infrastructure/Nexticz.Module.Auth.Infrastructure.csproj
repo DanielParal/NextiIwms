@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Development;Production;Staging</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Nexticz.Module.Auth.Application\Nexticz.Module.Auth.Application.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Auth.Domain\Nexticz.Module.Auth.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Libs\Nexticz.Lib.Shared\Nexticz.Lib.Shared.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.EmailSender.Contracts\Nexticz.Module.EmailSender.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

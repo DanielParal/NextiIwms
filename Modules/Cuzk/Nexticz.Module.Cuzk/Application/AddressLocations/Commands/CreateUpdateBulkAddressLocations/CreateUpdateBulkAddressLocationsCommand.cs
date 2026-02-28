@@ -1,0 +1,3 @@
+﻿namespace Nexticz.Module.Cuzk.Application.AddressLocations.Commands.CreateUpdateBulkAddressLocations;
+
+internal record CreateUpdateBulkAddressLocationsCommand(CreateUpdateBulkAddressLocationsRequest[] BulkRequests) : ICuzkCommand<CreateUpdateBulkAddressLocationsResponse>;

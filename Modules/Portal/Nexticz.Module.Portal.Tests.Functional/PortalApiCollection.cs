@@ -1,0 +1,8 @@
+﻿namespace Nexticz.Module.Portal.Tests.Functional;
+
+[CollectionDefinition(nameof(PortalApiCollection))]
+public class PortalApiCollection : ICollectionFixture<PortalApiFactoryFixture>
+{
+    // This class is a marker and requires no implementation.
+    // It tells xUnit to share the same instance of SharedApiFactoryFixture across all tests in this collection.
+}

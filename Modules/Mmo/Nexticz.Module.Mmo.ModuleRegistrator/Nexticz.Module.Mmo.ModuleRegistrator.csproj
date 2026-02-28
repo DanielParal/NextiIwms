@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Drying\Nexticz.Module.Mmo.Drying\Nexticz.Module.Mmo.Drying.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Mmo.SharedKernel\Nexticz.Module.Mmo.SharedKernel.csproj" />
+      <ProjectReference Include="..\Planning\Nexticz.Module.Mmo.Planning\Nexticz.Module.Mmo.Planning.csproj" />
+      <ProjectReference Include="..\Reporting\Nexticz.Module.Mmo.Reporting\Nexticz.Module.Mmo.Reporting.csproj" />
+      <ProjectReference Include="..\Settings\Nexticz.Module.Mmo.Settings\Nexticz.Module.Mmo.Settings.csproj" />
+      <ProjectReference Include="..\Washing\Nexticz.Module.Mmo.Washing\Nexticz.Module.Mmo.Washing.csproj" />
+    </ItemGroup>
+
+    
+
+</Project>

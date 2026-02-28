@@ -1,0 +1,3 @@
+﻿namespace Nexticz.Module.Mmo.Reporting.Application.Interfaces;
+
+internal interface IReportingReadOnlyEventStoreRepository : Module.Mmo.SharedKernel.DataAccess.IReadOnlyEventStoreRepository;

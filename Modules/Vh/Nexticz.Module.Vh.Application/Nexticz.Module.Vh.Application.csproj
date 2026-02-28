@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Development;Production;Staging</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Modules\Auth\Nexticz.Module.Auth.Contracts\Nexticz.Module.Auth.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Modules\Auth\Nexticz.Module.Auth.Domain\Nexticz.Module.Auth.Domain.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Vh.Contracts\Nexticz.Module.Vh.Contracts.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Vh.Domain\Nexticz.Module.Vh.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Common\Errors\"/>
+    </ItemGroup>
+
+</Project>

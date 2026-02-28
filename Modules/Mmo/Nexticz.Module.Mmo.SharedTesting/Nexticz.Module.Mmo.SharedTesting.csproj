@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.2" />
+        <PackageReference Include="Testcontainers" Version="4.2.0" />
+      <PackageReference Include="Testcontainers.MsSql" Version="4.2.0" />
+      <PackageReference Include="Testcontainers.PostgreSql" Version="4.2.0" />
+        <PackageReference Include="Shouldly" Version="4.3.0" />
+      <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="coverlet.collector" Version="6.0.2"/>
+        <PackageReference Include="Moq" Version="4.20.72" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Projects\Nexty\Tenants\Jipocar\Nexticz.Nexty.Jipocar.Api\Nexticz.Nexty.Jipocar.Api.csproj" />
+      <ProjectReference Include="..\Drying\Nexticz.Module.Mmo.Drying\Nexticz.Module.Mmo.Drying.csproj" />
+      <ProjectReference Include="..\Planning\Nexticz.Module.Mmo.Planning\Nexticz.Module.Mmo.Planning.csproj" />
+      <ProjectReference Include="..\Reporting\Nexticz.Module.Mmo.Reporting\Nexticz.Module.Mmo.Reporting.csproj" />
+      <ProjectReference Include="..\Settings\Nexticz.Module.Mmo.Settings\Nexticz.Module.Mmo.Settings.csproj" />
+      <ProjectReference Include="..\Washing\Nexticz.Module.Mmo.Washing\Nexticz.Module.Mmo.Washing.csproj" />
+    </ItemGroup>
+
+</Project>

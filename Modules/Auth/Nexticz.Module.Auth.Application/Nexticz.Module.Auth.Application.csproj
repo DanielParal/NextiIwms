@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Development;Production;Staging</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\EmailSender\Nexticz.Module.EmailSender.Publishers\Nexticz.Module.EmailSender.Publishers.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Auth.Contracts\Nexticz.Module.Auth.Contracts.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Auth.Domain\Nexticz.Module.Auth.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

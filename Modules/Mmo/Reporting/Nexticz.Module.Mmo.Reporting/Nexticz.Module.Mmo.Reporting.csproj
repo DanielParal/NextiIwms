@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\Drying\Nexticz.Module.Mmo.Drying.Contracts\Nexticz.Module.Mmo.Drying.Contracts.csproj" />
+      <ProjectReference Include="..\..\Nexticz.Module.Mmo.SharedKernel\Nexticz.Module.Mmo.SharedKernel.csproj" />
+      <ProjectReference Include="..\..\Planning\Nexticz.Module.Mmo.Planning.Contracts\Nexticz.Module.Mmo.Planning.Contracts.csproj" />
+      <ProjectReference Include="..\..\Washing\Nexticz.Module.Mmo.Washing.Contracts\Nexticz.Module.Mmo.Washing.Contracts.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Mmo.Reporting.Contracts\Nexticz.Module.Mmo.Reporting.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nexticz.Module.Mmo.FullWorkflowApiTests"/>
+        <InternalsVisibleTo Include="Nexticz.Module.Mmo.Reporting.Tests.Unit" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,4 @@
+﻿
+namespace Nexticz.Module.Sign.DocumentLoader.Application.Interfaces;
+
+internal interface IDocumentLoaderReadOnlyEventStoreRepository : Module.Sign.SharedKernel.DataAccess.IReadOnlyEventStoreRepository;

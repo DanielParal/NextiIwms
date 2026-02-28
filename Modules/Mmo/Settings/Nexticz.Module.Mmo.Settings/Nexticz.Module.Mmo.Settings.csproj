@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Modules\Auth\Nexticz.Module.Auth.Contracts\Nexticz.Module.Auth.Contracts.csproj" />
+      <ProjectReference Include="..\..\Nexticz.Module.Mmo.SharedKernel\Nexticz.Module.Mmo.SharedKernel.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Mmo.Settings.Contracts\Nexticz.Module.Mmo.Settings.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nexticz.Module.Mmo.Settings.Tests.Functional" />
+        <InternalsVisibleTo Include="Nexticz.Module.Mmo.Planning.Tests.Functional" />
+        <InternalsVisibleTo Include="Nexticz.Module.Mmo.FullWorkflowApiTests" />
+    </ItemGroup>
+
+</Project>

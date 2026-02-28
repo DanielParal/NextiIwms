@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Auth\Nexticz.Module.Auth.Contracts\Nexticz.Module.Auth.Contracts.csproj" />
+      <ProjectReference Include="..\..\DocumentManager\Nexticz.Module.Sign.DocumentManager.Contracts\Nexticz.Module.Sign.DocumentManager.Contracts.csproj" />
+      <ProjectReference Include="..\..\Nexticz.Module.Sign.SharedKernel\Nexticz.Module.Sign.SharedKernel.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Sign.Settings.Contracts\Nexticz.Module.Sign.Settings.Contracts.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nexticz.Module.Sign.Settings.Tests.Functional" />
+        <InternalsVisibleTo Include="Nexticz.Module.Sign.Settings.Tests.Unit" />
+    </ItemGroup>
+</Project>

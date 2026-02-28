@@ -1,0 +1,90 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  branches:
+    include:
+      - staging/*
+      - release/*
+      - hotfix/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'f4524ab8-3e6e-4332-9820-10fd2d6c1050'
+  imageRepository: 'iwmsbeapi'
+  containerRegistry: 'jipocariwms.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:  
+    - script: |
+        cd Projects/Nexty/Tenants/Jipocar/Nexticz.Nexty.Jipocar.Api
+        dotnet run --launch-profile "development" -- codegen write
+      displayName: Run Marten codegen write
+      
+    - script: |
+        echo "Disk usage overview:"
+        df -h
+
+        echo "Top 20 largest directories in the repo:"
+        du -h --max-depth=2 $(Build.SourcesDirectory) 2>/dev/null | sort -hr | head -n 20
+
+        echo "Top 20 largest directories in /tmp:"
+        du -h --max-depth=2 /tmp 2>/dev/null | sort -hr | head -n 20
+
+        echo "Docker images and volumes using space:"
+        sudo docker system df
+      displayName: Show disk usage and largest folders after codegen write
+      
+    - script: |
+        echo "Cleaning workspace to free disk space (keeping Marten generated files)..."
+        # Remove all bin/obj folders
+        find $(Build.SourcesDirectory) -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
+        # Clear NuGet cache
+        dotnet nuget locals all --clear
+        # Clean Docker dangling images/volumes
+        sudo docker system prune -af || true
+        # Clean temp folder
+        sudo rm -rf /tmp/*
+        df -h
+      displayName: Free disk space after Marten
+      
+    - script: |
+        echo "Disk usage overview:"
+        df -h
+
+        echo "Top 20 largest directories in the repo:"
+        du -h --max-depth=2 $(Build.SourcesDirectory) 2>/dev/null | sort -hr | head -n 20
+
+        echo "Top 20 largest directories in /tmp:"
+        du -h --max-depth=2 /tmp 2>/dev/null | sort -hr | head -n 20
+
+        echo "Docker images and volumes using space:"
+        sudo docker system df
+      displayName: Show disk usage and largest folders after cleaning
+        
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        buildContext: $(System.DefaultWorkingDirectory)
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)

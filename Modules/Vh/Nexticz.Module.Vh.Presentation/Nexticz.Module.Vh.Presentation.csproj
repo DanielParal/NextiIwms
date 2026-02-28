@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Development;Production;Staging</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Nexticz.Module.Vh.Application\Nexticz.Module.Vh.Application.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Vh.Contracts\Nexticz.Module.Vh.Contracts.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Vh.Domain\Nexticz.Module.Vh.Domain.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Vh.Infrastructure\Nexticz.Module.Vh.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Modules\EmailSender\Nexticz.Module.EmailSender.Publishers\Nexticz.Module.EmailSender.Publishers.csproj" />
+        <ProjectReference Include="..\..\..\..\Modules\Notifications\Nexticz.Module.Notifications.Contracts\Nexticz.Module.Notifications.Contracts.csproj" />
+        <ProjectReference Include="..\..\DocumentLoader\Nexticz.Module.Sign.DocumentLoader.Contracts\Nexticz.Module.Sign.DocumentLoader.Contracts.csproj" />
+        <ProjectReference Include="..\..\Nexticz.Module.Sign.SharedKernel\Nexticz.Module.Sign.SharedKernel.csproj" />
+        <ProjectReference Include="..\..\Settings\Nexticz.Module.Sign.Settings.Contracts\Nexticz.Module.Sign.Settings.Contracts.csproj" />
+        <ProjectReference Include="..\Nexticz.Module.Sign.DocumentManager.Contracts\Nexticz.Module.Sign.DocumentManager.Contracts.csproj" />
+    </ItemGroup>
+    
+</Project>

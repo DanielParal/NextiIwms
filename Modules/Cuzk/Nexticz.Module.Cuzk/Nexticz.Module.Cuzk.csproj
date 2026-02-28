@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Application\AddressLocations\Commands\" />
+      <Folder Include="Application\AddressLocations\Queries\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Libs\Nexticz.Lib.Shared\Nexticz.Lib.Shared.csproj" />
+      <ProjectReference Include="..\..\Notifications\Nexticz.Module.Notifications.Contracts\Nexticz.Module.Notifications.Contracts.csproj" />
+      <ProjectReference Include="..\Nexticz.Module.Cuzk.Contracts\Nexticz.Module.Cuzk.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nexticz.Module.Cuzk.Tests.Functional" />
+        <InternalsVisibleTo Include="Nexticz.Module.Cuzk.Tests.Unit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DotSpatial.Projections" Version="4.0.656" />
+      <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.2.2" />
+    </ItemGroup>
+
+</Project>

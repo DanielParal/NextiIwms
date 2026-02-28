@@ -1,0 +1,796 @@
+<mxfile host="65bd71144e">
+    <diagram id="23iRSUPoRavnBvh4doch" name="Page-1">
+        <mxGraphModel dx="2063" dy="2227" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="CreateItemsAfterKitFinishedOrchestrator" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-170" y="730" width="1370" height="900" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" style="edgeStyle=none;html=1;" parent="3" source="2" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="OrchestrateAsync" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="20" y="100" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="" style="edgeStyle=none;html=1;" parent="3" source="4" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Handle single kit items" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="230" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="217" value="" style="edgeStyle=none;html=1;" parent="3" source="5" target="215" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Handle sister kits items" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="230" y="170" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Get adjustment constant" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="390" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=none;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="3" source="2" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="201" value="" style="edgeStyle=none;html=1;" parent="3" source="7" target="200" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Get last item on line and planned items" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="560" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="" style="edgeStyle=none;html=1;" parent="3" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="204" value="" style="edgeStyle=none;html=1;" parent="3" source="200" target="203" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="200" value="Get build line items" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="720" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="212" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;shape=flexArrow;" parent="3" source="203" target="205" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="214" value="" style="edgeStyle=none;html=1;" parent="3" source="203" target="213" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="203" value="Process line items for line" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="900" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="207" value="" style="edgeStyle=none;html=1;" parent="3" source="205" target="206" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="205" value="Shorten item which should be shortened" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="180" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="210" value="" style="edgeStyle=none;html=1;" parent="3" source="206" target="208" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="206" value="Unplan planned items (IsPlanned = false)" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="370" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="211" value="" style="edgeStyle=none;html=1;" parent="3" source="208" target="209" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="208" value="Create kits based on the list" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="560" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="209" value="Create inactivities based on the list" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="740" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="213" value="Return ErrorOr&amp;lt;Success&amp;gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="3" vertex="1">
+                    <mxGeometry x="1100" y="50" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="218" value="" style="edgeStyle=none;html=1;" parent="3" source="215" target="216" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="215" value="Get build line items for line 1" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="410" y="170" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="221" style="edgeStyle=none;html=1;" parent="3" source="216" target="219" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="216" value="Get build line items for line 2" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="570" y="170" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="222" value="" style="edgeStyle=none;html=1;" parent="3" source="219" target="220" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="225" style="edgeStyle=none;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;shape=flexArrow;" parent="3" source="219" target="205" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="219" value="Process line items for line 1" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="840" y="170" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="226" style="edgeStyle=none;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;shape=flexArrow;" parent="3" source="220" target="205" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="220" value="Process line items for line 2" style="rounded=1;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+                    <mxGeometry x="1020" y="170" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="224" style="edgeStyle=none;html=1;entryX=0.342;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;" parent="3" source="220" target="213" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="LineItemQueueBuilder" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="335" width="610" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="" style="edgeStyle=none;html=1;" parent="13" source="18" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="22" vertex="1" connectable="0">
+                    <mxGeometry x="-0.6712" y="-2" relative="1" as="geometry">
+                        <mxPoint x="11" y="-2" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="13" source="18" target="21" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="323" y="230"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="25" vertex="1" connectable="0">
+                    <mxGeometry x="0.2564" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="18" value="Is last item end date in previous shift" style="rhombus;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="30" y="72.5" width="140" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="" style="edgeStyle=none;html=1;" parent="13" source="20" target="21" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Build line items for previous shift" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="243" y="100" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="Build line items for current shift" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="433" y="100" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="232" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="27" target="231">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="Build" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1400" y="-170" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=none;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;shape=flexArrow;" parent="1" source="20" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="NextToLastShiftLineItemsBuilder" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1380" y="-360" width="1210" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="No items added to the previous line" style="rounded=1;whiteSpace=wrap;html=1;" parent="29" vertex="1">
+                    <mxGeometry x="690" y="70" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" style="edgeStyle=none;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="29" source="34" target="33" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="36" vertex="1" connectable="0">
+                    <mxGeometry x="0.4789" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="39" value="" style="edgeStyle=none;html=1;" parent="29" source="34" target="38" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="39" vertex="1" connectable="0">
+                    <mxGeometry x="0.0333" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="last item end date &amp;gt;= next kit start date" style="rhombus;whiteSpace=wrap;html=1;" parent="29" vertex="1">
+                    <mxGeometry x="500" y="155" width="140" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="Get next to last shift items end date" style="rounded=1;whiteSpace=wrap;html=1;" parent="29" vertex="1">
+                    <mxGeometry x="700" y="190" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="End date is next kit start date or it might be end of previous shift" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=15;fillColor=#d5e8d4;strokeColor=#82b366;" parent="29" vertex="1">
+                    <mxGeometry x="720" y="270" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="Build downtimes from last item end date to the previously calculated end date + calculate with planned items in case there are some" style="rounded=1;whiteSpace=wrap;html=1;" parent="29" vertex="1">
+                    <mxGeometry x="880" y="168" width="220" height="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" style="edgeStyle=none;html=1;entryX=0.023;entryY=0.589;entryDx=0;entryDy=0;entryPerimeter=0;" parent="29" source="38" target="42" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="230" value="We will fill in items only from next to last shift. Not older!!" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="29">
+                    <mxGeometry x="310" y="80" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="233" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="29" source="231" target="34">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="234" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="233">
+                    <mxGeometry x="0.3422" y="-2" relative="1" as="geometry">
+                        <mxPoint x="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="236" value="" style="edgeStyle=none;html=1;" edge="1" parent="29" source="231" target="235">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="238" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="236">
+                    <mxGeometry x="-0.2784" y="-4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="231" value="last item end date &amp;lt; &lt;br&gt;next to last shift start date" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="29">
+                    <mxGeometry x="210" y="155" width="170" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="237" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="29" source="235" target="34">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="235" value="last item end date =&lt;br&gt;next to last shift start date" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="29">
+                    <mxGeometry x="212.5" y="330" width="165" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=none;html=1;shape=flexArrow;" parent="1" source="21" target="30" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="CurrentShiftLineItemsBuilder" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1610" y="160" width="1800" height="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=none;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" parent="32" source="44" target="46" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="47" vertex="1" connectable="0">
+                    <mxGeometry x="0.054" y="1" relative="1" as="geometry">
+                        <mxPoint x="-1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="if planned line items count == 0" style="rhombus;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="150" y="177.5" width="140" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="" style="edgeStyle=none;html=1;" parent="32" source="30" target="44" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="Build" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="24" y="200" width="80" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="" style="edgeStyle=none;html=1;" parent="32" source="46" target="49" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="Build without planned items" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="350" y="90" width="80" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="" style="edgeStyle=none;html=1;" parent="32" source="49" target="51" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="52" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3035" y="4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="55" value="" style="edgeStyle=none;html=1;" parent="32" source="49" target="54" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="55" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2459" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="if last end date on line == &lt;br&gt;next kit start date" style="rhombus;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="467.5" y="60.94" width="190" height="118.12" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="Create kit only&lt;br&gt;Start date = next kit start date&lt;br&gt;End date = next kit end date" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="32" vertex="1">
+                    <mxGeometry x="460" y="230" width="205" height="77.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="" style="edgeStyle=none;html=1;" parent="32" source="54" target="57" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="58" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1477" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="61" value="" style="edgeStyle=none;html=1;" parent="32" source="54" target="60" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="61" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2928" y="-3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="54" value="last end date on lin &amp;gt; &lt;br&gt;next kit start date" style="rhombus;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="720" y="66.88" width="160" height="106.25" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="Create kit only&lt;br&gt;Start date = last item end date&lt;br&gt;End date = next kit end date" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="32" vertex="1">
+                    <mxGeometry x="700" y="230" width="205" height="77.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="" style="edgeStyle=none;html=1;" parent="32" source="60" target="63" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="64" vertex="1" connectable="0">
+                    <mxGeometry x="-0.4134" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="69" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="32" source="60" target="67" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="next kit start date -&lt;br&gt;last item end date &amp;lt;=&lt;br&gt;adjustment constant" style="rhombus;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="980" y="55.93999999999999" width="160" height="123.12" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="Create adjustment&lt;br&gt;and&lt;br&gt;Create kit&lt;br&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Start date = next kit start date&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;End date = next kit end date" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="32" vertex="1">
+                    <mxGeometry x="957.5" y="230" width="205" height="77.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="Create downtime&lt;br&gt;and&lt;br&gt;Create adjustment&lt;br&gt;and&lt;br&gt;Create kit&lt;br&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Start date = next kit start date&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251);&quot;&gt;End date = next kit end date" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="32" vertex="1">
+                    <mxGeometry x="1230" y="52.5" width="205" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" value="" style="edgeStyle=none;html=1;" parent="32" source="72" target="75" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="Remove all planned items after next kit end date" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="200" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;" parent="32" source="44" target="72" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="320" y="400" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="74" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="73" vertex="1" connectable="0">
+                    <mxGeometry x="0.1313" y="-4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="77" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="32" source="75" target="46" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="77" vertex="1" connectable="0">
+                    <mxGeometry x="-0.4379" y="-3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="80" value="" style="edgeStyle=none;html=1;" parent="32" source="75" target="79" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="80" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0222" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="75" value="if planned line items count == 0" style="rhombus;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="360" y="397.5" width="140" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="" style="edgeStyle=none;html=1;" parent="32" source="79" target="83" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="Build with planned items" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="545" y="420" width="95" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" value="" style="edgeStyle=none;html=1;" parent="32" source="83" target="85" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="Build kit parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="690" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="" style="edgeStyle=none;html=1;" parent="32" source="85" target="87" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" value="Remove all planned items used in kit building" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="871" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="" style="edgeStyle=none;html=1;" parent="32" source="87" target="89" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="Build adjustment parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="1050" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="" style="edgeStyle=none;html=1;" parent="32" source="89" target="90" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="89" value="Remove all planned items used in adjustment building" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="1210" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="" style="edgeStyle=none;html=1;" parent="32" source="90" target="93" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="Build downtime parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="32" vertex="1">
+                    <mxGeometry x="1370" y="420" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="Return all the parts" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="32" vertex="1">
+                    <mxGeometry x="1560" y="420" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="" style="edgeStyle=none;html=1;" parent="1" source="95" target="108" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="Build kit parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1940" y="1020" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" style="edgeStyle=none;html=1;entryX=0.605;entryY=-0.066;entryDx=0;entryDy=0;entryPerimeter=0;shape=flexArrow;" parent="1" source="83" target="95" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="PlannedItemsSplitBuilder" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1920" y="900" width="1770" height="1770" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="" style="edgeStyle=none;html=1;" parent="97" source="98" target="105" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="113" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="106" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2105" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="115" value="" style="edgeStyle=none;html=1;" parent="97" source="98" target="114" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="116" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="115" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1913" y="-3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="98" value="planned item start date &amp;gt;=&lt;br&gt;next kit start date&lt;br&gt;(planned item started sooner)" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="357.5" y="97.5" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="105" target="108" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="437.5" y="250" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="" style="edgeStyle=none;html=1;" parent="97" source="108" target="98" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="108" value="Run all planned items in loop" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="180" y="118.75" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="" style="edgeStyle=none;html=1;" parent="97" source="114" target="117" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="121" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="119" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0842" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="114" value="Kit started sooner than planned item but ended sooner than planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="680" y="97.5" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="" style="edgeStyle=none;html=1;" parent="97" source="117" target="118" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="117" value="Add kit part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="760" y="250" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="126" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="118" target="108" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="430" y="370"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="118" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="760" y="340" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="127" value="Add kit only" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1110" y="250" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="133" style="edgeStyle=none;html=1;entryX=0.377;entryY=1.016;entryDx=0;entryDy=0;entryPerimeter=0;" parent="97" source="127" target="108" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="870" y="480"/>
+                            <mxPoint x="370" y="410"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="138" value="" style="edgeStyle=none;html=1;" parent="97" source="134" target="136" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="134" value="Build adjustment parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="28" y="800" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="139" value="" style="edgeStyle=none;html=1;" parent="97" source="136" target="137" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="140" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="139" vertex="1" connectable="0">
+                    <mxGeometry x="0.1365" relative="1" as="geometry">
+                        <mxPoint y="-1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="142" value="" style="edgeStyle=none;html=1;" parent="97" source="136" target="141" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="136" value="last item ended on the line &amp;gt;=&lt;div&gt;adjustment end date&lt;br&gt;(no space for adjustment)&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="200" y="778.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="137" value="Return no parts" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="97" vertex="1">
+                    <mxGeometry x="240" y="950" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="152" value="" style="edgeStyle=none;html=1;" parent="97" source="141" target="143" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="141" value="Run all planned items in loop" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="530" y="800" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="150" value="" style="edgeStyle=none;html=1;" parent="97" source="143" target="144" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="162" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="150" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0594" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="153" value="" style="edgeStyle=none;html=1;" parent="97" source="143" target="145" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="163" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="153" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2997" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="143" value="planned item start date &amp;gt;=&lt;br&gt;adjustment start date&lt;br&gt;(planned item started sooner)" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="720" y="778.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="151" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="144" target="141" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="144" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="800" y="931.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="154" value="" style="edgeStyle=none;html=1;" parent="97" source="145" target="149" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="164" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="154" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2339" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="155" value="" style="edgeStyle=none;html=1;" parent="97" source="145" target="146" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="161" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="155" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3418" y="4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="145" value="adjustment started sooner than planned item &lt;br&gt;but ended sooner than planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1042.5" y="778.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="156" value="" style="edgeStyle=none;html=1;" parent="97" source="146" target="147" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="146" value="Add adjustment part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1122.5" y="931.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="157" style="edgeStyle=none;html=1;" parent="97" source="147" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="590" y="860" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="770" y="1030"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="147" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1122.5" y="1030" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="159" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="148" target="141" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1250" y="1130"/>
+                            <mxPoint x="750" y="1100"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="148" value="Add adjustment only" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1472.5" y="931.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="158" value="" style="edgeStyle=none;html=1;" parent="97" source="149" target="148" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="160" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="158" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1831" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="149" value="adjustment started after planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1392.5" y="780" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="165" style="edgeStyle=none;html=1;entryX=0.59;entryY=0.021;entryDx=0;entryDy=0;entryPerimeter=0;" parent="97" source="149" target="141" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="660"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="166" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="165" vertex="1" connectable="0">
+                    <mxGeometry x="-0.7762" y="3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="167" value="" style="edgeStyle=none;html=1;" parent="97" source="168" target="172" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="168" value="Build downtime parts" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="28" y="1320" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="" style="edgeStyle=none;html=1;" parent="97" source="172" target="173" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="169" vertex="1" connectable="0">
+                    <mxGeometry x="0.1365" relative="1" as="geometry">
+                        <mxPoint y="-1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="171" value="" style="edgeStyle=none;html=1;" parent="97" source="172" target="175" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="last item ended on the line &amp;gt;=&lt;div&gt;downtime end date&lt;br&gt;(no space for downtime)&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="200" y="1298.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="Return no parts" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="97" vertex="1">
+                    <mxGeometry x="240" y="1470" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="174" value="" style="edgeStyle=none;html=1;" parent="97" source="175" target="180" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" value="Run all planned items in loop" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="530" y="1320" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="176" value="" style="edgeStyle=none;html=1;" parent="97" source="180" target="182" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="177" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="176" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0594" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="178" value="" style="edgeStyle=none;html=1;" parent="97" source="180" target="187" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="179" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="178" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2997" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="180" value="downtime item start date &amp;gt;=&lt;br&gt;adjustment start date&lt;br&gt;(planned item started sooner)" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="720" y="1298.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="182" target="175" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="182" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="800" y="1451.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="183" value="" style="edgeStyle=none;html=1;" parent="97" source="187" target="196" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="183" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2339" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="185" value="" style="edgeStyle=none;html=1;" parent="97" source="187" target="189" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="185" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3418" y="4" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="187" value="downtime started sooner than planned item &lt;br&gt;but ended sooner than planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1042.5" y="1298.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="" style="edgeStyle=none;html=1;" parent="97" source="189" target="191" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="Add downtime part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1122.5" y="1451.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="190" style="edgeStyle=none;html=1;" parent="97" source="191" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="590" y="1380" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="770" y="1550"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="191" value="Add planned item part" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1122.5" y="1550" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="192" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="97" source="193" target="175" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1250" y="1650"/>
+                            <mxPoint x="750" y="1620"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="193" value="Add downtime only" style="rounded=1;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1472.5" y="1451.25" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="194" value="" style="edgeStyle=none;html=1;" parent="97" source="196" target="193" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="195" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="194" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1831" y="1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="196" value="downtime started after planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="97" vertex="1">
+                    <mxGeometry x="1392.5" y="1300" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="197" style="edgeStyle=none;html=1;entryX=0.59;entryY=0.021;entryDx=0;entryDy=0;entryPerimeter=0;" parent="97" source="196" target="175" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="1180"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="198" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="197" vertex="1" connectable="0">
+                    <mxGeometry x="-0.7762" y="3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="129" value="" style="edgeStyle=none;html=1;" parent="1" source="122" target="127" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="130" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="129" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1984" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="131" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="122" target="108" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="2550" y="930"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="132" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="131" vertex="1" connectable="0">
+                    <mxGeometry x="-0.6596" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="122" value="Kit started after planned item" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2950" y="998.75" width="280" height="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" value="" style="edgeStyle=none;html=1;" parent="1" source="114" target="122" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="128" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="123" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2113" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="135" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;shape=flexArrow;" parent="1" source="87" target="134" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="2370" y="730"/>
+                            <mxPoint x="1850" y="750"/>
+                            <mxPoint x="1840" y="1600"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="199" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;shape=flexArrow;" parent="1" source="90" target="168" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="2910" y="820"/>
+                            <mxPoint x="1560" y="840"/>
+                            <mxPoint x="1560" y="2250"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="202" style="edgeStyle=none;html=1;shape=flexArrow;" parent="1" source="200" target="18" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="227" style="edgeStyle=none;html=1;entryX=0.115;entryY=0.646;entryDx=0;entryDy=0;entryPerimeter=0;shape=flexArrow;" parent="1" source="215" target="18" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="410" y="710"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="228" style="edgeStyle=none;html=1;shape=flexArrow;" parent="1" source="216" target="18" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="570" y="700"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="229" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;shape=flexArrow;" edge="1" parent="1" source="42" target="168">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="2360" y="80"/>
+                            <mxPoint x="1920" y="80"/>
+                            <mxPoint x="1500" y="80"/>
+                            <mxPoint x="1500" y="2140"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

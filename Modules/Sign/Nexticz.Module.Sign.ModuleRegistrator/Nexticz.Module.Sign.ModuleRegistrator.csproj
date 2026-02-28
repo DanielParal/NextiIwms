@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nexticz.Module.Sign.SharedKernel\Nexticz.Module.Sign.SharedKernel.csproj" />
+      <ProjectReference Include="..\Settings\Nexticz.Module.Sign.Settings\Nexticz.Module.Sign.Settings.csproj" />
+        <ProjectReference Include="..\DocumentLoader\Nexticz.Module.Sign.DocumentLoader\Nexticz.Module.Sign.DocumentLoader.csproj" />
+        <ProjectReference Include="..\DocumentManager\Nexticz.Module.Sign.DocumentManager\Nexticz.Module.Sign.DocumentManager.csproj" />
+    </ItemGroup>
+
+</Project>

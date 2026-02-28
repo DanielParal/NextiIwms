@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+This file is needed to explicitly exclude all Serilog files from trimming in order to make it run after publish
+For more details see the thread here: https://github.com/serilog/serilog-settings-configuration/issues/408
+-->
+<linker>
+    <assembly fullname="Serilog" />
+    <assembly fullname="Serilog.Settings.Configuration" />
+    <assembly fullname="Serilog.Sinks.File" />
+    <assembly fullname="Serilog.Sinks.EventLog" />
+</linker>

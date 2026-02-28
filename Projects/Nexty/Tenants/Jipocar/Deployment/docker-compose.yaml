@@ -1,0 +1,203 @@
+﻿
+# Secrets are stored in .env file. It is pushed to github but only for dev environment.
+
+services:
+  iwms-proxy:
+    build:
+      context: .
+      dockerfile: proxy.dockerfile
+    image: iwms-proxy
+    container_name: iwms-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      API_SERVER_NAME: ${IWMS_PROXY_API_SERVER_NAME}
+      FE_ADMIN_SERVER_NAME: ${IWMS_PROXY_FE_ADMIN_SERVER_NAME}
+      FE_VHLA_SERVER_NAME: ${IWMS_PROXY_FE_VHLA_SERVER_NAME}
+      FE_SIGN_SERVER_NAME: ${IWMS_PROXY_FE_SIGN_SERVER_NAME}
+      INFO_FE_SERVER_NAME: ${IWMS_PROXY_INFO_FE_SERVER_NAME}
+      INFO_BE_SERVER_NAME: ${IWMS_PROXY_INFO_BE_SERVER_NAME}
+      TZ: ${GLOBAL_TIMEZONE}
+    depends_on:
+      - iwms-be-api
+      - iwms-fe-admin
+      - iwms-fe-vhla
+      - iwms-fe-sign
+      - info-fe
+      - info-be
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+  
+  iwms-be-api:
+    image: jipocariwms.azurecr.io/iwmsbeapi:${IWMS_BE_API_IMAGE_NUMBER}
+    container_name: iwms-be-api
+    environment:
+      - DOTNET_ENVIRONMENT=${IWMS_BE_API_DOTNET_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - TZ=${GLOBAL_TIMEZONE}
+    depends_on:
+      - iwms-rabbitmq
+      - iwms-postgres
+      - iwms-mssql
+    volumes:
+      - ./data/assets:/app/iwms/assets
+      - ./data/logs/iwmsbe:/app/logs
+      - ./iwms-be-api-secrets.json:/app/iwms-be-api-secrets.json
+      - ./iwms-be-api-features.json:/app/iwms-be-api-features.json
+      - ./iwms-be-api-deployment-info.json:/app/iwms-be-api-deployment-info.json
+    mem_limit: 10g
+    cpus: 2
+    restart: always
+  
+  iwms-fe-admin:
+    image: jipocariwms.azurecr.io/iwmsfeadmin:${IWMS_FE_ADMIN_IMAGE_NUMBER}
+    container_name: iwms-fe-admin
+    environment:
+      - DARK_THEME=${IWMS_FE_ADMIN_DARK_THEME}
+      - LIGHT_THEME=${IWMS_FE_ADMIN_LIGHT_THEME}
+      - TENANT_LOGO_LIGHT=${IWMS_FE_ADMIN_TENANT_LOGO_LIGHT}
+      - TENANT_LOGO_DARK=${IWMS_FE_ADMIN_TENANT_LOGO_DARK}
+      - COPYRIGHT=${IWMS_FE_ADMIN_COPYRIGHT}
+      - TENANT=${IWMS_FE_ADMIN_TENANT}
+      - API_URL=${IWMS_FE_ADMIN_API_URL}
+      - PRODUCTION=${IWMS_FE_ADMIN_PRODUCTION}
+      - ENVIRONMENT_NAME=${IWMS_FE_ADMIN_ENVIRONMENT_NAME}
+      - VERSION=${IWMS_FE_ADMIN_VERSION}
+      - TZ=${GLOBAL_TIMEZONE}
+    depends_on:
+      - iwms-be-api
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+  
+  iwms-fe-vhla:
+    image: jipocariwms.azurecr.io/iwmsfevhla:${IWMS_FE_VHLA_IMAGE_NUMBER}
+    container_name: iwms-fe-vhla
+    environment:
+      - DARK_THEME=${IWMS_FE_VHLA_DARK_THEME}
+      - LIGHT_THEME=${IWMS_FE_VHLA_LIGHT_THEME}
+      - TENANT_LOGO_LIGHT=${IWMS_FE_VHLA_TENANT_LOGO_LIGHT}
+      - TENANT_LOGO_DARK=${IWMS_FE_VHLA_TENANT_LOGO_DARK}
+      - COPYRIGHT=${IWMS_FE_VHLA_COPYRIGHT}
+      - TENANT=${IWMS_FE_VHLA_TENANT}
+      - API_URL=${IWMS_FE_VHLA_API_URL}
+      - PRODUCTION=${IWMS_FE_VHLA_PRODUCTION}
+      - ENVIRONMENT_NAME=${IWMS_FE_VHLA_ENVIRONMENT_NAME}
+      - VERSION=${IWMS_FE_VHLA_VERSION}
+      - TZ=${GLOBAL_TIMEZONE}
+    depends_on:
+      - iwms-be-api
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+    
+  iwms-fe-sign:
+    image: jipocariwms.azurecr.io/iwmsfesign:${IWMS_FE_SIGN_IMAGE_NUMBER}
+    container_name: iwms-fe-sign
+    environment:
+      - DARK_THEME=${IWMS_FE_SIGN_DARK_THEME}
+      - LIGHT_THEME=${IWMS_FE_SIGN_LIGHT_THEME}
+      - TENANT_LOGO_LIGHT=${IWMS_FE_SIGN_TENANT_LOGO_LIGHT}
+      - TENANT_LOGO_DARK=${IWMS_FE_SIGN_TENANT_LOGO_DARK}
+      - COPYRIGHT=${IWMS_FE_SIGN_COPYRIGHT}
+      - TENANT=${IWMS_FE_SIGN_TENANT}
+      - API_URL=${IWMS_FE_SIGN_API_URL}
+      - PRODUCTION=${IWMS_FE_SIGN_PRODUCTION}
+      - ENVIRONMENT_NAME=${IWMS_FE_SIGN_ENVIRONMENT_NAME}
+      - VERSION=${IWMS_FE_SIGN_VERSION}
+      - TZ=${GLOBAL_TIMEZONE}
+    depends_on:
+      - iwms-be-api
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+        
+  info-fe:
+    image: jipocariwms.azurecr.io/${INFO_FE_IMAGE_NAME}:${INFO_FE_IMAGE_NUMBER}
+    container_name: info-fe
+    environment:
+      - TZ=${GLOBAL_TIMEZONE}
+    depends_on:
+      - info-be
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+        
+  info-be:
+    image: jipocariwms.azurecr.io/infobe:${INFO_BE_IMAGE_NUMBER}
+    container_name: info-be
+    environment:
+      - DOTNET_ENVIRONMENT=${INFO_BE_DOTNET_ENVIRONMENT}
+      - TZ=${GLOBAL_TIMEZONE}
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+  
+  iwms-rabbitmq:
+    build:
+      context: .
+      dockerfile: rabbitmq.dockerfile
+    image: iwms-rabbitmq
+    container_name: iwms-rabbitmq
+    ports:
+      - "5672:5672" # messaging
+      - "15672:15672" # management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${IWMS_RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${IWMS_RABBITMQ_DEFAULT_PASS}
+      TZ: ${GLOBAL_TIMEZONE}
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+  
+  iwms-postgres:
+    image: postgres:17
+    container_name: iwms-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${IWMS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${IWMS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${IWMS_POSTGRES_DB}
+      TZ: ${GLOBAL_TIMEZONE}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+
+  iwms-mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: iwms-mssql
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${IWMS_MSSQL_SA_PASSWORD}
+      TZ: ${GLOBAL_TIMEZONE}
+    user: root
+    volumes:
+      - ./data/mssql/data:/var/opt/mssql/data
+      - ./data/mssql/log:/var/opt/mssql/log
+      - ./data/mssql/secrets:/var/opt/mssql/secrets
+    command: /bin/bash -c "apt-get update && apt-get install -y tzdata && chown -R mssql /var/opt/mssql && /opt/mssql/bin/sqlservr"
+    mem_limit: 4g
+    cpus: 2
+    restart: always
+    
+  iwms-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
