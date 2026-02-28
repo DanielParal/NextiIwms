@@ -190,6 +190,221 @@ Parsed by splitting on `-` (exactly 4 segments expected for translations, 3 for 
 
 ---
 
+## How Errors Are Returned to the Frontend (Current State)
+
+When an API handler returns an `ErrorOr<T>` error, the endpoint calls `ResultsHelper.Problem(errors)` which maps it to an `ApiErrorResponse`:
+
+```json
+{
+  "correlationId": "abc-123",
+  "errors": [
+    {
+      "slug": "auth-api-authService-invalidPassword",
+      "message": "Neplatné heslo"
+    }
+  ]
+}
+```
+
+The **slug** is the `Error.Code` (built from `ComponentSlug + name`) and the **message** is the `Error.Description` (hardcoded Czech text). The FE receives the slug and can look up the translated text from its loaded translations.
+
+### The two translation source interfaces
+
+#### 1. `IErrorComponentSlugProvider` — Error messages (101 implementations)
+
+Every error class implements this interface with a static `ComponentSlug` property. Each `Error` static property encodes the slug as its `Code` and Czech text as `Description`:
+
+```csharp
+public abstract class AuthenticationErrors : IErrorComponentSlugProvider
+{
+    public static string ComponentSlug { get; } = "auth-api-authService-";
+
+    public static Error InvalidPassword => Error.Validation(
+        code: ComponentSlug + "invalidPassword",           // ← slug
+        description: "Neplatné heslo");                    // ← Czech default
+}
+```
+
+At startup, `TranslationsSeed` uses **reflection** to extract all `Error` properties and seeds them as Czech translations.
+
+#### 2. `ITranslatable` — General UI translations (not yet used)
+
+```csharp
+public interface ITranslatable
+{
+    string TranslationKey { get; }    // slug
+    string TranslationValue { get; }  // Czech default
+}
+```
+
+Record implementation exists (`Translation` record in `Lib.Shared`) but **no classes currently implement it in any module**. This is the intended interface for non-error translations (labels, button texts, tooltips, etc.).
+
+### Current seed process
+
+Each module has its own `TranslationsSeed` that runs at startup:
+
+| Module | How it seeds |
+|--------|-------------|
+| **Lang** | Directly uses MediatR to call `CreateTranslationsCommand` — seeds `TranslationErrors`, `LanguageErrors`, `Errors.Common` |
+| **Auth** | Waits for API health check, then calls Lang API over HTTP (`ILangApiService.CreateTranslations`) — seeds `AuthenticationErrors`, `Errors.Common` |
+| **Other modules** | Similar pattern — each module reflects its own error classes |
+
+---
+
+## Proposal: Static JSON Translation Files
+
+### Motivation
+
+Replace the current `GET /api/lang/translations` API call with **pre-generated static JSON files** served directly from the server. The FE fetches a single file per module+language instead of querying the database on every page load.
+
+### Target file structure
+
+```
+wwwroot/translations/
+  ├── cs/
+  │   ├── shared.json        ← Errors.Common, FileHandlingErrors, ImportErrors
+  │   ├── lang.json          ← LanguageErrors, TranslationErrors
+  │   ├── auth.json          ← AuthenticationErrors
+  │   ├── mmo.json
+  │   ├── vh.json
+  │   ├── sign.json
+  │   └── ...
+  ├── en/
+  │   ├── shared.json
+  │   ├── lang.json
+  │   ├── auth.json
+  │   └── ...
+  ├── de/
+  │   └── ...
+  └── manifest.json          ← version/hash per file for cache busting
+```
+
+### JSON file format
+
+Flat key-value (slug suffix → translated text), grouped by module:
+
+```json
+// wwwroot/translations/cs/auth.json
+{
+  "authService": {
+    "invalidPassword": "Neplatné heslo",
+    "userIsCurentlyLogged": "Neočekávaná chyba, byli jste odhlášeni",
+    "validationTokenError": "JWT token není validní",
+    "registrationError": "Chyba při registraci"
+  }
+}
+```
+
+The FE loads only what it needs: `GET /translations/cs/auth.json`
+
+### Manifest file for cache busting
+
+```json
+// wwwroot/translations/manifest.json
+{
+  "version": "2026-02-28T12:00:00Z",
+  "files": {
+    "cs/auth.json": "a1b2c3d4",
+    "cs/lang.json": "e5f6g7h8",
+    "en/auth.json": "i9j0k1l2"
+  }
+}
+```
+
+FE fetches manifest first, then loads files with `?v=a1b2c3d4` query param for cache busting.
+
+### When to regenerate
+
+| Trigger | What to regenerate |
+|---------|-------------------|
+| Translation created/updated/deleted | Only the affected `{lang}/{module}.json` file |
+| Language activated (Google Translate) | All `{lang}/*.json` files for the new language |
+| Application startup (seed) | All files for all active languages |
+
+A `TranslationFileGenerator` service handles regeneration. It queries translations from DB grouped by module + language and writes JSON files to `wwwroot/translations/`.
+
+### How errors flow to the FE (proposed)
+
+1. **Startup**: Seed runs → errors reflected from `IErrorComponentSlugProvider` + translations from `ITranslatable` → saved to DB → JSON files generated
+2. **Language activation**: Google Translate fills missing translations → JSON files regenerated for new language
+3. **API error response** stays the same — returns `{ slug, message }` — but the FE uses the **slug** to look up the translated message from its loaded JSON file instead of showing the hardcoded Czech `message`
+4. **FE initialization**: Loads `manifest.json` → loads `/{lang}/{module}.json` for each needed module → caches in memory
+
+```
+API Error Response                    FE Translation Lookup
+┌─────────────────────┐              ┌────────────────────────────┐
+│ {                   │              │ auth.json (loaded at init) │
+│   "slug":           │──lookup──→   │ {                          │
+│     "auth-api-      │              │   "authService": {         │
+│      authService-   │              │     "invalidPassword":     │
+│      invalidPassword│              │       "Invalid password"   │
+│   "message":        │              │   }                        │
+│     "Neplatné heslo"│              │ }                          │
+│ }                   │              └────────────────────────────┘
+└─────────────────────┘
+    ↑ fallback if FE                        ↑ preferred
+    translation missing                     (user's language)
+```
+
+### How to collect all translatable content via reflection
+
+Both interfaces can be discovered at startup using assembly scanning:
+
+```
+┌─────────────────────────────────┐     ┌──────────────────────────────┐
+│  IErrorComponentSlugProvider    │     │  ITranslatable               │
+│  (101 implementations)         │     │  (future UI translations)    │
+│                                 │     │                              │
+│  Reflect → static Error props   │     │  Reflect → TranslationKey +  │
+│  Error.Code = slug              │     │            TranslationValue   │
+│  Error.Description = Czech text │     │                              │
+└───────────────┬─────────────────┘     └──────────────┬───────────────┘
+                │                                      │
+                └──────────────┬───────────────────────┘
+                               ▼
+                 ┌─────────────────────────┐
+                 │  TranslationsSeed       │
+                 │  (unified, per module)  │
+                 │                         │
+                 │  1. Scan all assemblies  │
+                 │  2. Collect slugs+values │
+                 │  3. Upsert to DB        │
+                 │  4. Generate JSON files  │
+                 └─────────────────────────┘
+```
+
+### Suggested implementation for `ITranslatable` usage
+
+Modules can define UI translation classes that implement `ITranslatable`:
+
+```csharp
+// In any module, e.g. Auth
+public class AuthUiTranslations
+{
+    public static ITranslatable LoginButton => new Translation(
+        "auth-ui-login-loginButton", "Přihlásit se");
+    public static ITranslatable LogoutButton => new Translation(
+        "auth-ui-login-logoutButton", "Odhlásit se");
+    public static ITranslatable ForgotPassword => new Translation(
+        "auth-ui-login-forgotPassword", "Zapomenuté heslo");
+}
+```
+
+The seed process scans for all `static ITranslatable` properties the same way it scans for `static Error` properties — by reflection. Both feed into the same translation DB and JSON generation pipeline.
+
+### What changes vs. current approach
+
+| Aspect | Current | Proposed |
+|--------|---------|----------|
+| FE fetches translations | `GET /api/lang/translations` (DB query each time) | `GET /translations/{lang}/{module}.json` (static file) |
+| Error seeding | Each module seeds independently, some via HTTP | Unified seed scans all assemblies at startup |
+| Translation sources | Only `IErrorComponentSlugProvider` | Both `IErrorComponentSlugProvider` + `ITranslatable` |
+| Google Translate output | Stored only in DB | Stored in DB + regenerated JSON files |
+| Caching | None (DevExtreme paging) | Browser/CDN cache + manifest hash busting |
+| `GET /api/lang/translations` | Public, anonymous | Kept as admin-only for translation management UI |
+
+---
+
 ## Dependencies
 
 ### Internal
