@@ -13,7 +13,7 @@
 
                 <!-- ========== FE LANE ========== -->
                 <mxCell id="fe-lane" value="Frontend (Browser)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="100" width="560" height="1600" as="geometry"/>
+                    <mxGeometry x="40" y="100" width="560" height="1800" as="geometry"/>
                 </mxCell>
                 <mxCell id="fe-init" value="Page Load / Route Change" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" parent="fe-lane" vertex="1">
                     <mxGeometry x="180" y="50" width="200" height="40" as="geometry"/>
@@ -128,9 +128,23 @@
                     <mxGeometry x="20" y="1460" width="300" height="60" as="geometry"/>
                 </mxCell>
 
+                <!-- FE Export/Import -->
+                <mxCell id="fe-importexport-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="30" y="1540" width="500" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-importexport-label" value="Export &amp; Import Translations" style="text;html=1;fontSize=14;fontStyle=1;align=center;fontColor=#333333;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="1560" width="340" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-export-trans" value="POST /api/lang/translations/export&#xa;[Authorized]&#xa;&#xa;Download XLSX with all translations&#xa;Columns: Key, Language, Value" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="1600" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-import-trans" value="POST /api/lang/translations/import&#xa;[Authorized] (multipart/form-data)&#xa;&#xa;Upload XLSX (Key, Language, Value)&#xa;Only Value is updated" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="280" y="1600" width="250" height="80" as="geometry"/>
+                </mxCell>
+
                 <!-- ========== BE LANE ========== -->
                 <mxCell id="be-lane" value="Backend API (ASP.NET Minimal API)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="640" y="100" width="500" height="1600" as="geometry"/>
+                    <mxGeometry x="640" y="100" width="500" height="1800" as="geometry"/>
                 </mxCell>
                 <mxCell id="be-scope-endpoint" value="GET /api/lang/translations/scope/{scope}&#xa;&#xa;Language from request header&#xa;Query Marten: WHERE Scope = X AND Language = Y&#xa;Returns: [{ name, value }, ...]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=10;" parent="be-lane" vertex="1">
                     <mxGeometry x="50" y="50" width="400" height="80" as="geometry"/>
@@ -201,6 +215,20 @@
                     <mxGeometry x="60" y="1480" width="380" height="30" as="geometry"/>
                 </mxCell>
 
+                <!-- BE Export/Import -->
+                <mxCell id="be-importexport-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" parent="be-lane" vertex="1">
+                    <mxGeometry x="30" y="1540" width="440" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-importexport-label" value="Export &amp; Import Translations (XLSX)" style="text;html=1;fontSize=13;fontStyle=1;align=center;fontColor=#333333;" parent="be-lane" vertex="1">
+                    <mxGeometry x="50" y="1560" width="400" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-export-handler" value="TranslationExportXlsxHandler&#xa;&#xa;Extends ExportXlsxBaseTemplateHandler&#xa;Fetches all translations from Marten&#xa;Returns XLSX: Key, Language, Value" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="20" y="1600" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-import-handler" value="TranslationImportXlsxHandler&#xa;&#xa;Extends ImportXlsxBaseTemplateHandler&#xa;Validates Key, Language, Value not empty&#xa;Finds translation by Key + Language&#xa;Updates only Value + UpdatedAt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="260" y="1600" width="220" height="100" as="geometry"/>
+                </mxCell>
+
                 <!-- ========== MQ LANE ========== -->
                 <mxCell id="mq-lane" value="RabbitMQ + MassTransit Consumer" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="1180" y="100" width="500" height="800" as="geometry"/>
@@ -262,6 +290,12 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="arrow-be-to-mq" value="publish" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;fontStyle=1;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="be-publish" target="mq-queue" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-export" value="POST export" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="fe-export-trans" target="be-export-handler" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-import" value="POST import" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="fe-import-trans" target="be-import-handler" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
 

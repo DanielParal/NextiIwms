@@ -9,6 +9,7 @@
 5. **MassTransit event-driven multi-language creation** — when a translation is created, publish a MassTransit event; a consumer creates translations for all other enabled languages for the tenant
 6. **API endpoint for translations by scope** — FE fetches `GET /api/lang/translations/scope/{scope}` with language from request header
 7. **FE auto-creates missing translations** — if the FE needs a translation that doesn't exist in the response, it sends a fire-and-forget `POST` to create it and displays the default value immediately
+8. **Export and import translations via XLSX** — use similar logic as SIGN module Depositor import/export (`ExportXlsxBaseTemplateHandler` / `ImportXlsxBaseTemplateHandler` from `Lib.Shared`); export contains only Key, Language, Value columns; import updates only Value
 
 ### Why Scope (not a separate entity)?
 
@@ -53,7 +54,7 @@ Modules/Lang/
 │   │   ├── PipelineBehaviors/
 │   │   ├── MassTransitPublishers/
 │   │   ├── Languages/ (Commands, Queries)
-│   │   └── Translations/ (Commands, Queries)
+│   │   └── Translations/ (Commands, Queries, ImportExport)
 │   ├── Domain/
 │   │   ├── AggregateRoot.cs
 │   │   ├── Languages/ (Language.cs, Events/, LanguageErrors.cs)
@@ -1426,6 +1427,217 @@ Each `CreateTranslationCommand` is **idempotent** (skips if Key+Language exists)
 | `POST`   | `/api/lang/translations`                 | Anonymous  | Create single translation (FE auto-create, language from header) |
 | `PUT`    | `/api/lang/translations/{id}`            | Authorized | Update value (admin panel)                 |
 | `DELETE` | `/api/lang/translations/{id}`            | Authorized | Remove translation (admin panel)           |
+| `POST`  | `/api/lang/translations/export`          | Authorized | Export all translations to XLSX (Key, Language, Value) |
+| `POST`  | `/api/lang/translations/import`          | Authorized | Import translations from XLSX (updates Value only) |
+
+---
+
+## Step 10: Export and Import Translations
+
+Use similar logic as SIGN module settings Depositors (`DepositorExportXlsxHandler` / `DepositorImportXlsxHandler`). Both handlers use base classes from `Nexticz.Lib.Shared`.
+
+### TranslationHeader — column definition
+
+**New file**: `Application/Translations/ImportExport/TranslationHeader.cs`
+
+```csharp
+namespace Nexticz.Module.Lang.Application.Translations.ImportExport;
+
+internal static class TranslationHeader
+{
+    public const int Key = 1;
+    public const int Language = 2;
+    public const int Value = 3;
+
+    public static readonly string[] ExpectedFileHeader = ["Key", "Language", "Value"];
+}
+```
+
+### TranslationItem — import row model
+
+**New file**: `Application/Translations/ImportExport/TranslationItem.cs`
+
+```csharp
+namespace Nexticz.Module.Lang.Application.Translations.ImportExport;
+
+internal class TranslationItem
+{
+    public required string Key { get; set; }
+    public required string Language { get; set; }
+    public required string Value { get; set; }
+}
+```
+
+### Export handler
+
+**New file**: `Application/Translations/ImportExport/TranslationExportXlsxHandler.cs`
+
+Extends `ExportXlsxBaseTemplateHandler<Translation, string>` and implements `IExportXlsxHandler<string>`.
+
+```csharp
+using ClosedXML.Excel;
+using Nexticz.Lib.Shared.ImportExport;
+using Nexticz.Module.Lang.Application.Interfaces;
+using Nexticz.Module.Lang.Domain.Translations;
+
+namespace Nexticz.Module.Lang.Application.Translations.ImportExport;
+
+internal class TranslationExportXlsxHandler(
+    ILangReadOnlyEventStoreRepository readOnlyRepository)
+    : ExportXlsxBaseTemplateHandler<Translation, string>, IExportXlsxHandler<string>
+{
+    protected override string ExportType { get; } = "TranslationXlsx";
+    protected override string[] Headers { get; } = TranslationHeader.ExpectedFileHeader;
+    protected override string WorksheetName { get; } = "Translations";
+    protected override string FileNamePrefix { get; } = "TranslationsExport";
+
+    protected override async Task<List<Translation>> FetchDataAsync(CancellationToken cancellationToken)
+    {
+        return await readOnlyRepository.GetAllAsync<Translation>(cancellationToken);
+    }
+
+    protected override void PopulateData(IXLWorksheet worksheet, List<Translation> entities)
+    {
+        for (var i = 0; i < entities.Count; i++)
+        {
+            var row = i + 2; // row 1 = header
+            worksheet.Cell(row, TranslationHeader.Key).Value = entities[i].Key;
+            worksheet.Cell(row, TranslationHeader.Language).Value = entities[i].Language;
+            worksheet.Cell(row, TranslationHeader.Value).Value = entities[i].Value;
+        }
+    }
+}
+```
+
+### Import handler
+
+**New file**: `Application/Translations/ImportExport/TranslationImportXlsxHandler.cs`
+
+Extends `ImportXlsxBaseTemplateHandler<string>` and implements `IImportXlsxHandler<string>`.
+
+For each row:
+1. Validate that Key, Language, Value are not empty
+2. Find existing translation by Key + Language
+3. If translation not found → add to errors
+4. If found → update only the Value, set UpdatedAt
+
+```csharp
+using ClosedXML.Excel;
+using Nexticz.Lib.Shared.ImportExport;
+using Nexticz.Module.Lang.Application.Interfaces;
+using Nexticz.Module.Lang.Domain.Translations;
+using Nexticz.Module.Lang.Domain.Translations.Events;
+
+namespace Nexticz.Module.Lang.Application.Translations.ImportExport;
+
+internal class TranslationImportXlsxHandler(
+    ILangReadOnlyEventStoreRepository readOnlyRepository,
+    ILangUnitOfWork unitOfWork,
+    IClock clock)
+    : ImportXlsxBaseTemplateHandler<string>, IImportXlsxHandler<string>
+{
+    protected override string[] ExpectedFileHeader { get; } = TranslationHeader.ExpectedFileHeader;
+    protected override string ImportType { get; } = "TranslationXlsx";
+
+    protected override Task<(List<object> Items, List<ImportBaseError> Errors)> GetItemsFromExcelAsync(
+        IXLWorksheet worksheet, CancellationToken cancellationToken)
+    {
+        var items = new List<object>();
+        var errors = new List<ImportBaseError>();
+
+        foreach (var row in worksheet.RowsUsed().Skip(1)) // skip header
+        {
+            var key = row.Cell(TranslationHeader.Key).GetString().Trim();
+            var language = row.Cell(TranslationHeader.Language).GetString().Trim();
+            var value = row.Cell(TranslationHeader.Value).GetString().Trim();
+
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(language)
+                || string.IsNullOrWhiteSpace(value))
+            {
+                errors.Add(new ImportBaseError(
+                    $"Row {row.RowNumber()}: Key, Language, and Value must not be empty"));
+                continue;
+            }
+
+            items.Add(new TranslationItem { Key = key, Language = language, Value = value });
+        }
+
+        return Task.FromResult((items, errors));
+    }
+
+    protected override async Task<(ImportBaseItem? SuccessItem, ImportBaseError? Error)> ProcessItemAsync(
+        object item, CancellationToken cancellationToken)
+    {
+        var translationItem = (TranslationItem)item;
+
+        var existing = await readOnlyRepository.GetFirstByConditionAsync<Translation>(
+            t => t.Key == translationItem.Key && t.Language == translationItem.Language,
+            cancellationToken);
+
+        if (existing is null)
+            return (null, new ImportBaseError(
+                $"Translation not found: Key={translationItem.Key}, Language={translationItem.Language}"));
+
+        existing.Update(translationItem.Value);
+
+        unitOfWork.AppendEvent(existing.Id, new TranslationUpdatedEvent(
+            existing.Id, translationItem.Value, clock.UtcNowOffset));
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return (new ImportBaseItem($"{translationItem.Key} ({translationItem.Language})"), null);
+    }
+}
+```
+
+### Endpoint registration
+
+Add export/import endpoints to `MapLangV2ApiEndpoints()` in `ServiceCollectionExtensions.cs`:
+
+```csharp
+// Inside MapLangV2ApiEndpoints()
+var translations = app.MapGroup("/api/lang/translations").WithTags("Lang");
+
+// ... existing translation endpoints ...
+
+translations.MapPost("/export", async (IExportXlsxHandler<string> handler, CancellationToken ct) =>
+{
+    var result = await handler.HandleAsync(ct);
+    return Results.File(result.Content, result.ContentType, result.FileName);
+}).RequireAuthorization();
+
+translations.MapPost("/import", async (IFormFile file, IImportXlsxHandler<string> handler, CancellationToken ct) =>
+{
+    var result = await handler.HandleAsync(file, ct);
+    return Results.Ok(result);
+}).RequireAuthorization().DisableAntiforgery();
+```
+
+### DI registration
+
+Add to `ApplicationServiceCollectionExtensions.cs`:
+
+```csharp
+services.AddScoped<IExportXlsxHandler<string>, TranslationExportXlsxHandler>();
+services.AddScoped<IImportXlsxHandler<string>, TranslationImportXlsxHandler>();
+```
+
+### XLSX file format
+
+Export produces and import expects an XLSX file with exactly 3 columns:
+
+| Column | Header   | Example                                  |
+|--------|----------|------------------------------------------|
+| A (1)  | Key      | `nexti-pageNotFound-pageNotFound`        |
+| B (2)  | Language | `cz`                                     |
+| C (3)  | Value    | `Stránka nenalezena`                     |
+
+- **Export**: `POST /api/lang/translations/export` → returns XLSX file with all translations
+- **Import**: `POST /api/lang/translations/import` (multipart/form-data) → accepts XLSX, updates only Value for each matching Key+Language pair, returns `ImportBaseResult` (successfully imported items + errors)
+
+### Authorization
+
+Both endpoints require authorization (same as other admin translation endpoints — Developer or SysAdmin role).
 
 ---
 
@@ -1474,6 +1686,10 @@ Each `CreateTranslationCommand` is **idempotent** (skips if Key+Language exists)
 | `Infrastructure/Consumers/TranslationCreatedConsumerDefinition.cs` | Infrastructure | Consumer config |
 | `Infrastructure/MassTransitModulePrefixName.cs` | Infrastructure | Queue prefix |
 | `Infrastructure/MassTransitRegistrator.cs` | Infrastructure | Consumer registration |
+| `Application/Translations/ImportExport/TranslationHeader.cs` | Application | XLSX column indices (Key=1, Language=2, Value=3) and expected header |
+| `Application/Translations/ImportExport/TranslationItem.cs` | Application | Import row model (Key, Language, Value) |
+| `Application/Translations/ImportExport/TranslationExportXlsxHandler.cs` | Application | XLSX export handler — exports all translations with Key, Language, Value |
+| `Application/Translations/ImportExport/TranslationImportXlsxHandler.cs` | Application | XLSX import handler — updates Value only, matched by Key+Language |
 | `Infrastructure/Dbs/Seeds/TranslationsSeed.cs` | Infrastructure | Reflection-based seed |
 
 ### Create (shared Contracts — `Nexticz.Module.Lang.Contracts`)
