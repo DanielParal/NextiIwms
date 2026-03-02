@@ -3,12 +3,16 @@
 ## Goals
 
 1. **Replace EF Core + SQL Server with Marten + PostgreSQL** — follow the Portal module pattern (event sourcing, projections, document store)
-2. Two complete CRUD systems: **Language** and **Translation** (with Section management)
+2. Two complete CRUD systems: **Language** and **Translation** (no separate Section entity — `SectionSlug` is a plain string on Translation)
 3. **Remove Google Translate API** dependency entirely
 4. **Reflection-based seed** that scans all assemblies for `IErrorComponentSlugProvider` and `ITranslatable` implementations
 5. **MassTransit event-driven JSON regeneration** — when a translation within a section is created or updated, publish a MassTransit event; a consumer regenerates that section's JSON file
 6. **Feature flag** `LangJsonGenerationEnabled` to control whether JSON file generation is active
 7. **Serve JSON files** to the FE via static file middleware
+
+### Why no Section entity?
+
+The section (`SectionSlug`) is just a categorization label — e.g. `"auth"`, `"lang"`, `"shared"`, `"mmo-settings"`. It has no meaningful metadata beyond the slug itself. The FE determines which section a translation belongs to when creating it. Storing it as a plain `string` on `Translation` avoids unnecessary CRUD, FK constraints, and complexity. If the FE needs a list of available sections, a `SELECT DISTINCT SectionSlug FROM Translations` query provides it without a dedicated table.
 
 ---
 
@@ -347,163 +351,7 @@ public class AggregateRoot : Lib.Shared.DomainCore.AggregateRoot
 
 ---
 
-## Step 3: Domain — Section Aggregate (Event-Sourced)
-
-### Aggregate
-
-**New file**: `Domain/Sections/Section.cs`
-
-```csharp
-using ErrorOr;
-using Nexticz.Module.Lang.Domain.Sections.Events;
-
-namespace Nexticz.Module.Lang.Domain.Sections;
-
-public class Section : AggregateRoot
-{
-    public string Name { get; private set; }
-    public string Slug { get; private set; }        // unique key: "auth", "lang", "shared", "mmo-settings"
-    public DateTimeOffset CreatedAt { get; private set; }
-
-    private Section() { }
-
-    private Section(string name, string slug, DateTimeOffset createdAt, Guid? id = null)
-        : base(id ?? Guid.NewGuid())
-    {
-        Name = name;
-        Slug = slug;
-        CreatedAt = createdAt;
-    }
-
-    public static ErrorOr<Section> CreateFrom(string name, string slug, DateTimeOffset createdAt)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return SectionErrors.CreateSectionError;
-
-        if (string.IsNullOrWhiteSpace(slug))
-            return SectionErrors.CreateSectionError;
-
-        return new Section(name, slug, createdAt);
-    }
-
-    public ErrorOr<Success> Update(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return SectionErrors.CreateSectionError;
-
-        Name = name;
-        return Result.Success;
-    }
-
-    public void Apply(SectionCreatedEvent e) { Name = e.Name; Slug = e.Slug; CreatedAt = e.CreatedAt; }
-    public void Apply(SectionUpdatedEvent e) { Name = e.Name; }
-}
-```
-
-### Events
-
-**New file**: `Domain/Sections/Events/SectionCreatedEvent.cs`
-
-```csharp
-using Nexticz.Lib.Shared.DataAccess.Marten.Configuration;
-
-namespace Nexticz.Module.Lang.Domain.Sections.Events;
-
-public record SectionCreatedEvent(Guid Id, string Name, string Slug, DateTimeOffset CreatedAt) : IMartenEvent;
-```
-
-**New file**: `Domain/Sections/Events/SectionUpdatedEvent.cs`
-
-```csharp
-using Nexticz.Lib.Shared.DataAccess.Marten.Configuration;
-
-namespace Nexticz.Module.Lang.Domain.Sections.Events;
-
-public record SectionUpdatedEvent(Guid Id, string Name, DateTimeOffset UpdatedAt) : IMartenEvent;
-```
-
-**New file**: `Domain/Sections/Events/SectionDeletedEvent.cs`
-
-```csharp
-using Nexticz.Lib.Shared.DataAccess.Marten.Configuration;
-
-namespace Nexticz.Module.Lang.Domain.Sections.Events;
-
-public record SectionDeletedEvent(Guid Id, DateTimeOffset DeletedAt) : IMartenEvent;
-```
-
-### Errors
-
-**New file**: `Domain/Sections/SectionErrors.cs`
-
-```csharp
-using ErrorOr;
-using Nexticz.Lib.Shared.Errors;
-
-namespace Nexticz.Module.Lang.Domain.Sections;
-
-public abstract class SectionErrors : IErrorComponentSlugProvider
-{
-    public static string ComponentSlug { get; } = "lang-api-sectionService-";
-
-    public static Error SectionWithIdDoesNotExist => Error.Validation(
-        code: ComponentSlug + "sectionWithIdDoesNotExist",
-        description: "Tato sekce neexistuje");
-
-    public static Error SectionWithSlugAlreadyExists => Error.Validation(
-        code: ComponentSlug + "sectionWithSlugAlreadyExists",
-        description: "Sekce s tímto klíčem již existuje");
-
-    public static Error CreateSectionError => Error.Validation(
-        code: ComponentSlug + "createSectionError",
-        description: "Sekci se nepodařilo vytvořit");
-}
-```
-
-### Projection + Configurator
-
-**New file**: `Infrastructure/Sections/SectionProjection.cs`
-
-```csharp
-using JasperFx.Events;
-using Marten.Events.Aggregation;
-using Nexticz.Module.Lang.Domain.Sections;
-using Nexticz.Module.Lang.Domain.Sections.Events;
-
-namespace Nexticz.Module.Lang.Infrastructure.Sections;
-
-public class SectionProjection : SingleStreamProjection<Section, Guid>
-{
-    public SectionProjection() { DeleteEvent<SectionDeletedEvent>(); }
-    public void Apply(IEvent<SectionCreatedEvent> @event, Section section) => section.Apply(@event.Data);
-    public void Apply(IEvent<SectionUpdatedEvent> @event, Section section) => section.Apply(@event.Data);
-}
-```
-
-**New file**: `Infrastructure/Sections/SectionConfigurator.cs`
-
-```csharp
-using JasperFx.Events.Projections;
-using Marten;
-using Nexticz.Lib.Shared.DataAccess.Marten.Configuration;
-
-namespace Nexticz.Module.Lang.Infrastructure.Sections;
-
-internal class SectionConfigurator : IMartenConfigurator
-{
-    public void Configure(StoreOptions options)
-    {
-        options.Projections.Add<SectionProjection>(ProjectionLifecycle.Inline);
-        options.Schema.For<Domain.Sections.Section>().UniqueIndex(x => x.Slug);
-        options.Schema.For<Domain.Sections.Section>()
-            .DocumentAlias(MartenConfigurationOrchestrator.PluralizeTableName<Domain.Sections.Section>());
-    }
-}
-```
-
----
-
-## Step 4: Domain — Translation Aggregate (Event-Sourced)
+## Step 3: Domain — Translation Aggregate (Event-Sourced)
 
 ### Aggregate
 
@@ -524,8 +372,7 @@ public class Translation : AggregateRoot
     public string Slug { get; private set; }
     public string Value { get; private set; }
     public string LanguageShortcut { get; private set; }
-    public Guid SectionId { get; private set; }
-    public string SectionSlug { get; private set; }
+    public string SectionSlug { get; private set; }       // plain string — e.g. "auth", "lang", "shared"
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset? UpdatedAt { get; private set; }
 
@@ -534,25 +381,28 @@ public class Translation : AggregateRoot
     private Translation(
         string module, string feature, string component, string name,
         string slug, string value, string languageShortcut,
-        Guid sectionId, string sectionSlug,
+        string sectionSlug,
         DateTimeOffset createdAt, Guid? id = null) : base(id ?? Guid.NewGuid())
     {
         Module = module; Feature = feature; Component = component; Name = name;
         Slug = slug; Value = value; LanguageShortcut = languageShortcut;
-        SectionId = sectionId; SectionSlug = sectionSlug;
+        SectionSlug = sectionSlug;
         CreatedAt = createdAt;
     }
 
     public static ErrorOr<Translation> CreateFrom(
         string module, string feature, string component, string name,
         string slug, string value, string languageShortcut,
-        Guid sectionId, string sectionSlug, DateTimeOffset createdAt)
+        string sectionSlug, DateTimeOffset createdAt)
     {
         if (string.IsNullOrWhiteSpace(slug))
             return TranslationErrors.CreateTranslationError;
 
+        if (string.IsNullOrWhiteSpace(sectionSlug))
+            return TranslationErrors.CreateTranslationError;
+
         return new Translation(module, feature, component, name, slug, value,
-            languageShortcut, sectionId, sectionSlug, createdAt);
+            languageShortcut, sectionSlug, createdAt);
     }
 
     public ErrorOr<Success> Update(string value)
@@ -565,7 +415,7 @@ public class Translation : AggregateRoot
     {
         Module = e.Module; Feature = e.Feature; Component = e.Component; Name = e.Name;
         Slug = e.Slug; Value = e.Value; LanguageShortcut = e.LanguageShortcut;
-        SectionId = e.SectionId; SectionSlug = e.SectionSlug;
+        SectionSlug = e.SectionSlug;
         CreatedAt = e.CreatedAt;
     }
 
@@ -589,7 +439,7 @@ namespace Nexticz.Module.Lang.Domain.Translations.Events;
 public record TranslationCreatedEvent(
     Guid Id, string Module, string Feature, string Component, string Name,
     string Slug, string Value, string LanguageShortcut,
-    Guid SectionId, string SectionSlug, DateTimeOffset CreatedAt) : IMartenEvent;
+    string SectionSlug, DateTimeOffset CreatedAt) : IMartenEvent;
 ```
 
 **New file**: `Domain/Translations/Events/TranslationUpdatedEvent.cs`
@@ -662,7 +512,7 @@ internal class TranslationConfigurator : IMartenConfigurator
 
 ---
 
-## Step 5: CRUD Command/Query Handlers (Marten Style)
+## Step 4: CRUD Command/Query Handlers (Marten Style)
 
 All commands implement `ILangCommand<TResponse>` so the `LangPostCommandBehavior` auto-saves after each handler. Queries use `ILangReadOnlyEventStoreRepository` for reads.
 
@@ -725,17 +575,20 @@ internal class UpdateLanguageCommandHandler(
 
 **Queries** use `readOnlyRepository.GetFilteredAsync<Language>(...)` and `readOnlyRepository.GetFirstByConditionAsync<Language>(...)` — same as Portal.
 
-### Section CRUD
+### Section Slugs (no CRUD — derived from translations)
 
-Same pattern. Create/Update/Delete with events, queries via read-only repository.
+There is **no Section entity or CRUD**. The `SectionSlug` is a plain string on `Translation`. If the FE needs a list of available sections, use:
 
-| Type    | Name                    | Description                       |
-|---------|-------------------------|-----------------------------------|
-| Command | `CreateSectionCommand`  | Creates a new section (start stream) |
-| Command | `UpdateSectionCommand`  | Updates section name (append event) |
-| Command | `DeleteSectionCommand`  | Deletes section (append delete event) — only if no translations reference it |
-| Query   | `GetSectionByIdQuery`   | `readOnlyRepository.GetByIdAsync<Section>(id)` |
-| Query   | `ListSectionsQuery`     | `readOnlyRepository.GetFilteredAsync<Section>(filteringParams)` |
+```csharp
+// Query: ListSectionSlugsQuery
+var sectionSlugs = await session
+    .Query<Translation>()
+    .Select(t => t.SectionSlug)
+    .Distinct()
+    .ToListAsync(cancellationToken);
+```
+
+This returns e.g. `["auth", "lang", "shared", "mmo-settings"]` — no dedicated table needed.
 
 ### Translation CRUD
 
@@ -751,12 +604,6 @@ internal class CreateTranslationsCommandHandler(
     public async Task<ErrorOr<CreateTranslationsResponse>> Handle(
         CreateTranslationsCommand command, CancellationToken cancellationToken)
     {
-        var section = await readOnlyRepository.GetFirstByConditionAsync<Section>(
-            s => s.Slug == command.Request.SectionSlug, cancellationToken);
-
-        if (section is null)
-            return SectionErrors.SectionWithIdDoesNotExist;
-
         foreach (var item in command.Request.Items)
         {
             var existing = await readOnlyRepository.GetFirstByConditionAsync<Translation>(
@@ -770,21 +617,21 @@ internal class CreateTranslationsCommandHandler(
 
             var translation = Translation.CreateFrom(
                 module, feature, component, name, item.Slug, item.Value,
-                command.Request.LanguageShortcut, section.Id, section.Slug, clock.UtcNowOffset);
+                command.Request.LanguageShortcut, command.Request.SectionSlug, clock.UtcNowOffset);
 
             if (translation.IsError) continue;
 
             var createdEvent = new TranslationCreatedEvent(
                 translation.Value.Id, module, feature, component, name,
                 item.Slug, item.Value, command.Request.LanguageShortcut,
-                section.Id, section.Slug, clock.UtcNowOffset);
+                command.Request.SectionSlug, clock.UtcNowOffset);
 
             unitOfWork.StartStream<TranslationCreatedEvent, Translation>(translation.Value.Id, createdEvent);
         }
 
         // Publish MassTransit event for JSON regeneration
         await langPublisher.PublishTranslationSectionChanged(
-            section.Slug, command.Request.LanguageShortcut, cancellationToken);
+            command.Request.SectionSlug, command.Request.LanguageShortcut, cancellationToken);
 
         // ... return response
     }
@@ -803,7 +650,7 @@ await langPublisher.PublishTranslationSectionChanged(
 
 ---
 
-## Step 6: MassTransit Event-Driven JSON Regeneration
+## Step 5: MassTransit Event-Driven JSON Regeneration
 
 ### MassTransit message contract
 
@@ -956,7 +803,7 @@ Command Handler                     RabbitMQ                    Consumer
 
 ---
 
-## Step 7: JSON File Generator (Reads from Marten)
+## Step 6: JSON File Generator (Reads from Marten)
 
 **New file**: `Application/Common/Interfaces/ITranslationFileGenerator.cs`
 
@@ -1020,15 +867,18 @@ internal class TranslationFileGenerator(
             .Where(l => l.IsActive)
             .ToListAsync(cancellationToken);
 
-        var sections = await session
-            .Query<Domain.Sections.Section>()
+        // No Section table — derive section slugs from translations
+        var sectionSlugs = await session
+            .Query<Domain.Translations.Translation>()
+            .Select(t => t.SectionSlug)
+            .Distinct()
             .ToListAsync(cancellationToken);
 
         foreach (var language in activeLanguages)
         {
-            foreach (var section in sections)
+            foreach (var sectionSlug in sectionSlugs)
             {
-                await RegenerateAsync(section.Slug, language.Shortcut, cancellationToken);
+                await RegenerateAsync(sectionSlug, language.Shortcut, cancellationToken);
             }
         }
     }
@@ -1052,7 +902,7 @@ Full slug as key — FE error `slug` field maps directly.
 
 ---
 
-## Step 8: Feature Flag — `LangJsonGenerationEnabled`
+## Step 7: Feature Flag — `LangJsonGenerationEnabled`
 
 ### Configuration
 
@@ -1078,7 +928,7 @@ The flag is checked in the MassTransit consumer (`TranslationSectionChangedConsu
 
 ---
 
-## Step 9: Serve JSON Files to FE
+## Step 8: Serve JSON Files to FE
 
 ### Static file middleware
 
@@ -1117,7 +967,7 @@ FE fetches: `GET /translations/cs/auth.json` — no auth required.
 
 ---
 
-## Step 10: Remove Google Translate API
+## Step 9: Remove Google Translate API
 
 1. **Delete** `Application/Languages/Configurations/GoogleApisSettings.cs`
 2. **Remove** Google Translate logic from `UpdateLanguageCommandHandler` — handler now only toggles `IsActive`
@@ -1128,7 +978,7 @@ Translations for non-Czech languages are entered manually via the Translation CR
 
 ---
 
-## Step 11: Reflection-Based Seed (Unified)
+## Step 10: Reflection-Based Seed (Unified)
 
 Single `TranslationsSeed` in the Lang module scans **all loaded assemblies** for `IErrorComponentSlugProvider` and `ITranslatable`:
 
@@ -1159,13 +1009,13 @@ public class TranslationsSeed
         foreach (var type in translatableTypes)
             itemsToSeed.AddRange(GetTranslatablesFromType(type));
 
-        // 3. Group by section (module part of slug) and seed
-        var groupedByModule = itemsToSeed.GroupBy(x => x.Slug.Split('-')[0]);
+        // 3. Group by section slug (module part of slug) and seed
+        var groupedBySection = itemsToSeed.GroupBy(x => x.Slug.Split('-')[0]);
 
-        foreach (var group in groupedByModule)
+        foreach (var group in groupedBySection)
         {
-            // Auto-create section if it doesn't exist
-            // ... then create translations via MediatR command
+            // SectionSlug = group.Key (e.g. "auth", "lang", "mmo")
+            // Create translations via MediatR command with SectionSlug = group.Key
         }
     }
 }
@@ -1180,7 +1030,7 @@ public class TranslationsSeed
 
 ---
 
-## Step 12: API Endpoints
+## Step 11: API Endpoints
 
 ### Language endpoints
 
@@ -1190,15 +1040,11 @@ public class TranslationsSeed
 | `GET`    | `/api/lang/languages/{shortcut}` | Authorized | Get by shortcut      |
 | `PUT`    | `/api/lang/languages/{shortcut}` | Authorized | Toggle active        |
 
-### Section endpoints
+### Section slugs endpoint (derived from translations, no CRUD)
 
-| Method   | Route                        | Auth       | Description          |
-|----------|------------------------------|------------|----------------------|
-| `GET`    | `/api/lang/sections`         | Authorized | List sections        |
-| `GET`    | `/api/lang/sections/{id}`    | Authorized | Get section by ID    |
-| `POST`   | `/api/lang/sections`         | Authorized | Create section       |
-| `PUT`    | `/api/lang/sections/{id}`    | Authorized | Update section       |
-| `DELETE` | `/api/lang/sections/{id}`    | Authorized | Remove section       |
+| Method | Route                    | Auth       | Description                              |
+|--------|--------------------------|------------|------------------------------------------|
+| `GET`  | `/api/lang/sections`     | Authorized | List distinct section slugs from translations |
 
 ### Translation endpoints
 
@@ -1227,14 +1073,8 @@ public class TranslationsSeed
 | `Domain/AggregateRoot.cs` | Domain | Module-level base class |
 | `Domain/Languages/Language.cs` (rewrite) | Domain | Event-sourced aggregate |
 | `Domain/Languages/Events/*.cs` | Domain | Created, Updated, Deleted events |
-| `Domain/Sections/Section.cs` | Domain | Section aggregate |
-| `Domain/Sections/SectionErrors.cs` | Domain | Section errors |
-| `Domain/Sections/Events/*.cs` | Domain | Created, Updated, Deleted events |
-| `Domain/Translations/Translation.cs` (rewrite) | Domain | Event-sourced aggregate |
+| `Domain/Translations/Translation.cs` (rewrite) | Domain | Event-sourced aggregate (with SectionSlug string) |
 | `Domain/Translations/Events/*.cs` | Domain | Created, Updated, Deleted events |
-| `Contracts/Sections/SectionResponse.cs` | Contracts | Section GET DTO |
-| `Contracts/Sections/CreateSectionRequest.cs` | Contracts | Section POST DTO |
-| `Contracts/Sections/UpdateSectionRequest.cs` | Contracts | Section PUT DTO |
 | `Contracts/Translations/TranslationSectionChanged.cs` | Contracts | MassTransit message |
 | `Application/ILangCommand.cs` | Application | Command marker interface |
 | `Application/Interfaces/ILangDocumentSessionProvider.cs` | Application | Marten session provider |
@@ -1244,16 +1084,12 @@ public class TranslationsSeed
 | `Application/MassTransitPublishers/ILangPublisher.cs` | Application | Publisher interface |
 | `Application/MassTransitPublishers/LangPublisher.cs` | Application | Publisher implementation |
 | `Application/Common/Interfaces/ITranslationFileGenerator.cs` | Application | JSON generation contract |
-| `Application/Sections/Commands/*` | Application | Section CQRS handlers |
-| `Application/Sections/Queries/*` | Application | Section query handlers |
 | `Infrastructure/ILangDocumentStore.cs` | Infrastructure | Marten store marker |
 | `Infrastructure/BaseRepositories/LangDocumentSessionProvider.cs` | Infrastructure | Session provider |
 | `Infrastructure/BaseRepositories/LangUnitOfWork.cs` | Infrastructure | UoW implementation |
 | `Infrastructure/BaseRepositories/LangReadOnlyEventStoreRepository.cs` | Infrastructure | Read-only repo |
 | `Infrastructure/Languages/LanguageProjection.cs` | Infrastructure | Marten projection |
 | `Infrastructure/Languages/LanguageConfigurator.cs` | Infrastructure | Marten schema config |
-| `Infrastructure/Sections/SectionProjection.cs` | Infrastructure | Marten projection |
-| `Infrastructure/Sections/SectionConfigurator.cs` | Infrastructure | Marten schema config |
 | `Infrastructure/Translations/TranslationProjection.cs` | Infrastructure | Marten projection |
 | `Infrastructure/Translations/TranslationConfigurator.cs` | Infrastructure | Marten schema config |
 | `Infrastructure/Translations/TranslationFileGenerator.cs` | Infrastructure | JSON file generation |
@@ -1261,7 +1097,6 @@ public class TranslationsSeed
 | `Infrastructure/Consumers/TranslationSectionChangedConsumerDefinition.cs` | Infrastructure | Consumer config |
 | `Infrastructure/MassTransitModulePrefixName.cs` | Infrastructure | Queue prefix |
 | `Infrastructure/MassTransitRegistrator.cs` | Infrastructure | Consumer registration |
-| `Presentation/Endpoints/Sections/*.cs` | Presentation | Section API endpoints |
 
 ### Modify
 
@@ -1270,8 +1105,8 @@ public class TranslationsSeed
 | `Infrastructure/DependencyInjection.cs` | Replace EF Core with Marten, register new services |
 | `Application/DependencyInjection.cs` | Add PostCommandBehavior, register publisher |
 | `Presentation/DependencyInjection.cs` | Add static file middleware, remove EF seed |
-| `Presentation/ApiEndpoints.cs` | Add Sections routes |
-| `Presentation/Endpoints/EndpointsExtensions.cs` | Register section endpoints |
+| `Presentation/ApiEndpoints.cs` | Add section-slugs list route |
+| `Presentation/Endpoints/EndpointsExtensions.cs` | Register section-slugs endpoint |
 | `Contracts/Translations/CreateTranslationsRequest.cs` | Add `SectionSlug` |
 | Application command/query handlers | Rewrite to use Marten repos + publish MassTransit events |
 | `Infrastructure/Seeds/TranslationsSeed.cs` | Rewrite: unified reflection scan |
