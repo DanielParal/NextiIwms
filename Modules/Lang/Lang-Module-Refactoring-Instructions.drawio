@@ -1,349 +1,344 @@
-<mxfile host="app.diagrams.net" modified="2026-03-02T00:00:00.000Z" agent="Claude" version="24.0.0" type="device">
-  <diagram id="lang-full-flow" name="Lang Module - Full Flow with FE Calls">
-    <mxGraphModel dx="2200" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1800" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
+<mxfile host="65bd71144e">
+    <diagram id="lang-full-flow" name="Lang Module - Full Flow (API Endpoint)">
+        <mxGraphModel dx="1213" dy="1139" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1800" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Lang Module - Full Flow (FE &amp;rarr; API Endpoint &amp;rarr; MassTransit Multi-Language)" style="text;html=1;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="20" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" value="New module (Nexticz.Module.Lang) &amp;mdash; active when LangV2IsEnabled = true | Scope-based API | MassTransit multi-language | Marten + PostgreSQL" style="text;html=1;fontSize=13;fontStyle=2;align=center;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="55" width="1000" height="25" as="geometry"/>
+                </mxCell>
 
-        <!-- ==================== TITLE ==================== -->
-        <mxCell id="title" value="Lang Module - Full Flow (FE &amp;rarr; BE &amp;rarr; JSON Generation)" style="text;html=1;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="600" y="20" width="800" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="subtitle" value="No Section entity &amp;mdash; SectionSlug is a plain string on Translation" style="text;html=1;fontSize=13;fontStyle=2;align=center;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="700" y="55" width="600" height="25" as="geometry" />
-        </mxCell>
+                <!-- ========== FE LANE ========== -->
+                <mxCell id="fe-lane" value="Frontend (Browser)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="100" width="560" height="1600" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-init" value="Page Load / Route Change" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="180" y="50" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-fetch-scope" value="GET /api/lang/translations/scope/{scope}&#xa;&#xa;Language resolved from request header&#xa;(Accept-Language or custom header)&#xa;[Anonymous, no auth needed]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="110" y="110" width="340" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-init-to-fetch" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-init" target="fe-fetch-scope" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-response" value="Response: [{ name, value }, ...]&#xa;&#xa;e.g. [{ &quot;name&quot;: &quot;pageNotFound&quot;,&#xa;       &quot;value&quot;: &quot;Str&#xe1;nka nenalezena&quot; }]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="130" y="210" width="300" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-fetch-to-response" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-fetch-scope" target="fe-response" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-store" value="Store in memory / state manager&#xa;keyed by scope" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="150" y="295" width="260" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-response-to-store" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-response" target="fe-store" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-check-keys" value="Loop through all translation keys&#xa;needed for current view" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="140" y="360" width="280" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-store-to-check" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-store" target="fe-check-keys" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-decision" value="Name found&#xa;in scope?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="210" y="425" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-check-to-decision" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-check-keys" target="fe-decision" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-show" value="Display translated&#xa;value to user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="350" y="510" width="170" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-decision-to-show" value="YES" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;fontSize=10;fontColor=#82b366;" parent="fe-lane" source="fe-decision" target="fe-show" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-not-found" value="Name NOT found&#xa;&#xa;1. Show default value immediately&#xa;2. Fire background POST &amp;darr;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="505" width="220" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-decision-to-notfound" value="NO" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;fontSize=10;fontColor=#b85450;" parent="fe-lane" source="fe-decision" target="fe-not-found" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-auto-create" value="Fire-and-forget: POST /api/lang/translations&#xa;&#xa;{ scope, name, value: defaultValue }&#xa;&#xa;Language from request header&#xa;Idempotent &amp;mdash; skips if Key+Language exists&#xa;FE does NOT wait for response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="590" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-notfound-to-autocreate" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-not-found" target="fe-auto-create" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-autocreate-note" value="Triggers MassTransit &amp;rarr; consumer creates&#xa;translations for all other enabled languages" style="text;html=1;fontSize=9;fontStyle=2;fontColor=#888888;align=left;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="695" width="260" height="25" as="geometry"/>
+                </mxCell>
 
-        <!-- ==================== FE (BROWSER) SWIM LANE ==================== -->
-        <mxCell id="fe-lane" value="Frontend (Browser)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;rounded=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="100" width="560" height="1650" as="geometry" />
-        </mxCell>
+                <!-- FE Error Flow -->
+                <mxCell id="fe-error-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="30" y="740" width="500" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-error-label" value="API Error Handling Flow" style="text;html=1;fontSize=14;fontStyle=1;align=center;fontColor=#333333;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="760" width="340" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-api-call" value="FE makes any API call&#xa;e.g. POST /api/auth/login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="170" y="800" width="220" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-error" value="API returns error:&#xa;{ &quot;slug&quot;: &quot;auth-api-authService-invalidPassword&quot;,&#xa;  &quot;message&quot;: &quot;Neplatn&#xe9; heslo&quot; }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="870" width="360" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-api-to-error" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-api-call" target="fe-error" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-derive" value="Derive scope + name from error.slug&#xa;&#xa;slug = &quot;lang-api-languageService-doesNotExist&quot;&#xa;&amp;rarr; scope = &quot;lang-api-languageService&quot;&#xa;&amp;rarr; name = &quot;doesNotExist&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="950" width="360" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-error-to-derive" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-error" target="fe-derive" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-error-lookup" value="Lookup name in loaded scope translations&#xa;&#xa;found? &amp;rarr; show translated value&#xa;not found? &amp;rarr; show error.message (Czech fallback)&#xa;              + POST auto-create (same as above)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="1050" width="360" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-derive-to-lookup" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="fe-lane" source="fe-derive" target="fe-error-lookup" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: App Init -->
-        <mxCell id="fe-init" value="App Init / Route Change" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" vertex="1" parent="fe-lane">
-          <mxGeometry x="180" y="50" width="200" height="40" as="geometry" />
-        </mxCell>
+                <!-- FE Admin Panel -->
+                <mxCell id="fe-admin-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="30" y="1150" width="500" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-admin-label" value="Admin Panel (Translation Management)" style="text;html=1;fontSize=14;fontStyle=1;align=center;fontColor=#333333;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="100" y="1170" width="340" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-list-langs" value="GET /api/lang/languages&#xa;[Anonymous]&#xa;&#xa;List all languages (Cs, En, De...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="1210" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-toggle-lang" value="PUT /api/lang/languages/{shortcut}&#xa;[Authorized]&#xa;&#xa;{ isActive: true/false }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="280" y="1210" width="250" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-list-scopes" value="GET /api/lang/scopes&#xa;[Authorized]&#xa;&#xa;Returns DISTINCT scopes&#xa;[&quot;nexti-pageNotFound&quot;, &quot;lang-api-languageService&quot;, ...]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="1290" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-list-trans" value="GET /api/lang/translations&#xa;[Authorized]&#xa;&#xa;Paginated, filterable by&#xa;Scope, Language, Name" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="280" y="1290" width="250" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-update-trans" value="PUT /api/lang/translations/{id}&#xa;[Authorized]&#xa;&#xa;{ value: &quot;New translation text&quot; }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="1390" width="240" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-delete-trans" value="DELETE /api/lang/translations/{id}&#xa;[Authorized]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="280" y="1400" width="250" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe-scope-note" value="Note: Scope is a plain string&#xa;(e.g. &quot;nexti-pageNotFound&quot;, &quot;lang-api-languageService&quot;).&#xa;FE decides the scope when creating translations.&#xa;No Scope entity/CRUD needed." style="text;html=1;fontSize=10;fontStyle=2;fontColor=#888888;align=left;" parent="fe-lane" vertex="1">
+                    <mxGeometry x="20" y="1460" width="300" height="60" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: Fetch JSON -->
-        <mxCell id="fe-fetch-json" value="GET /translations/{lang}/{section}.json&#xa;&#xa;e.g. GET /translations/cs/auth.json&#xa;(Anonymous, no auth needed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="fe-lane">
-          <mxGeometry x="120" y="120" width="320" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-init-to-fetch" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-init" target="fe-fetch-json">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- ========== BE LANE ========== -->
+                <mxCell id="be-lane" value="Backend API (ASP.NET Minimal API)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="100" width="500" height="1600" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-scope-endpoint" value="GET /api/lang/translations/scope/{scope}&#xa;&#xa;Language from request header&#xa;Query Marten: WHERE Scope = X AND Language = Y&#xa;Returns: [{ name, value }, ...]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="50" y="50" width="400" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-mediatr" value="MediatR Pipeline&#xa;&#xa;Endpoint &amp;rarr; Command/Query &amp;rarr; Handler&#xa;&amp;rarr; LangPostCommandBehavior (auto-save)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="be-lane" vertex="1">
+                    <mxGeometry x="50" y="170" width="400" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-lang-handlers" value="Language Handlers&#xa;&#xa;CreateLanguageCommandHandler&#xa;UpdateLanguageCommandHandler&#xa;ListLanguagesQueryHandler&#xa;GetLanguageByShortcutQueryHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="20" y="280" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-trans-handlers" value="Translation Handlers&#xa;&#xa;CreateTranslationCommandHandler&#xa;UpdateTranslationCommandHandler&#xa;RemoveTranslationCommandHandler&#xa;GetTranslationsByScopeQueryHandler&#xa;ListTranslationsQueryHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="260" y="280" width="220" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-scope-query" value="ListScopesQueryHandler&#xa;&#xa;SELECT DISTINCT Scope&#xa;FROM Translations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="120" y="420" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-marten" value="Marten (PostgreSQL)&#xa;Event Store + Document Projections&#xa;&#xa;Language aggregate&#xa;Translation aggregate (Name, Scope, Key, Value, Language)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="be-lane" vertex="1">
+                    <mxGeometry x="60" y="520" width="380" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-handlers-to-marten" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="be-lane" source="be-trans-handlers" target="be-marten" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-langhandlers-to-marten" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" parent="be-lane" source="be-lang-handlers" target="be-marten" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-publish" value="Publish MassTransit message&#xa;&#xa;TranslationCreated&#xa;{ Scope, Name, Value, Language }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" parent="be-lane" vertex="1">
+                    <mxGeometry x="100" y="640" width="300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-trans-to-publish" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="be-lane" source="be-marten" target="be-publish" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-publish-label" value="After CreateTranslationCommand&#xa;(from FE auto-create or Seed)" style="text;html=1;fontSize=9;fontStyle=2;fontColor=#888888;" parent="be-lane" vertex="1">
+                    <mxGeometry x="310" y="610" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-seed" value="TranslationsSeed (Reflection-Based)&#xa;&#xa;Scans all assemblies for:&#xa;&#x2022; IErrorComponentSlugProvider&#xa;&#x2022; ITranslatable&#xa;&#xa;Derives Scope from ComponentSlug (minus trailing -)&#xa;Creates translations via CreateTranslationCommand&#xa;(idempotent, publishes TranslationCreated event)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d0de;strokeColor=#996185;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="50" y="770" width="400" height="130" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: Store translations -->
-        <mxCell id="fe-store" value="Store in memory / state manager&#xa;{ slug: translatedValue }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="fe-lane">
-          <mxGeometry x="150" y="220" width="260" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-fetch-to-store" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-fetch-json" target="fe-store">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- BE Error Flow -->
+                <mxCell id="be-error-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" parent="be-lane" vertex="1">
+                    <mxGeometry x="30" y="930" width="440" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-error-label" value="API Error Response Flow (ErrorOr &amp;rarr; ApiErrorResponse)" style="text;html=1;fontSize=13;fontStyle=1;align=center;fontColor=#333333;" parent="be-lane" vertex="1">
+                    <mxGeometry x="50" y="950" width="400" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-domain-error" value="1. Domain: IErrorComponentSlugProvider&#xa;&#xa;ComponentSlug = &quot;lang-api-languageService-&quot;&#xa;&#xa;Error.Validation(&#xa;  code: ComponentSlug + &quot;doesNotExist&quot;,&#xa;  description: &quot;Tento jazyk neexistuje&quot;)&#xa;&#xa;code = Key (Scope-Name) for translation lookup&#xa;description = Czech hardcoded fallback (Value)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="30" y="990" width="440" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-handler-error" value="2. Handler returns ErrorOr&lt;T&gt;&#xa;&#xa;if (language is null)&#xa;    return LanguageErrors.DoesNotExist;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="30" y="1140" width="440" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-domain-to-handler" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="be-lane" source="be-domain-error" target="be-handler-error" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-results-helper" value="3. ResultsHelper.Problem(error)&#xa;&#xa;Validation/Failure &amp;rarr; 422&#xa;NotFound &amp;rarr; 404 | Unauthorized &amp;rarr; 401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;" parent="be-lane" vertex="1">
+                    <mxGeometry x="30" y="1220" width="440" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-handler-to-results" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="be-lane" source="be-handler-error" target="be-results-helper" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-api-response" value="4. ApiErrorResponse (JSON sent to FE)&#xa;&#xa;{&#xa;  &quot;correlationId&quot;: &quot;aB3xK9m&quot;,&#xa;  &quot;errors&quot;: [{&#xa;    &quot;slug&quot;: &quot;lang-api-languageService-doesNotExist&quot;,&#xa;    &quot;message&quot;: &quot;Tento jazyk neexistuje&quot;&#xa;  }]&#xa;}&#xa;&#xa;slug = Key (Scope-Name) for translation lookup&#xa;message = Czech fallback (from Error.Description)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;size=15;" parent="be-lane" vertex="1">
+                    <mxGeometry x="60" y="1300" width="380" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-results-to-response" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="be-lane" source="be-results-helper" target="be-api-response" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-key-bridge-note" value="The Key is the bridge: same key in ErrorOr code,&#xa;Translation.Key, and API error response slug." style="text;html=1;fontSize=10;fontStyle=3;fontColor=#b85450;align=center;" parent="be-lane" vertex="1">
+                    <mxGeometry x="60" y="1480" width="380" height="30" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: API call that may fail -->
-        <mxCell id="fe-api-call" value="FE makes any API call&#xa;e.g. POST /api/auth/login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="fe-lane">
-          <mxGeometry x="170" y="300" width="220" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-store-to-api" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-store" target="fe-api-call">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- ========== MQ LANE ========== -->
+                <mxCell id="mq-lane" value="RabbitMQ + MassTransit Consumer" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=14;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="100" width="500" height="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-queue" value="RabbitMQ Queue&#xa;&#xa;module-lang-translation-created" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#f8cecc;strokeColor=#b85450;size=15;fontSize=11;fontStyle=1;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="130" y="50" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-consumer" value="TranslationCreatedConsumer&#xa;&#xa;Receives: { Scope, Name, Value, Language }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="75" y="170" width="350" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-queue-to-consumer" value="consume" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=2;fontSize=10;" parent="mq-lane" source="mq-queue" target="mq-consumer" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-get-langs" value="1. Get all enabled languages for tenant&#xa;&#xa;Query Marten: Language WHERE IsActive = true" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="75" y="270" width="350" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-consumer-to-langs" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="mq-lane" source="mq-consumer" target="mq-get-langs" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-loop" value="2. For each OTHER language (skip source language):&#xa;&#xa;a. Check if Key+Language already exists (idempotent)&#xa;   Key = &quot;{Scope}-{Name}&quot;&#xa;b. If exists &amp;rarr; skip&#xa;c. If not &amp;rarr; Create Translation with same Value&#xa;   (to be translated later by admin)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="50" y="365" width="400" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-langs-to-loop" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="mq-lane" source="mq-get-langs" target="mq-loop" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-save" value="3. Append events + save to Marten&#xa;&#xa;Each new translation gets its own&#xa;TranslationCreatedEvent in the event store" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="75" y="515" width="350" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-loop-to-save" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="mq-lane" source="mq-loop" target="mq-save" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-example" value="Example: FE creates &quot;pageNotFound&quot; for CZ&#xa;&#xa;Consumer creates:&#xa;&#x2022; { Scope: nexti-pageNotFound, Name: pageNotFound,&#xa;    Value: &quot;Str&#xe1;nka nenalezena&quot;, Language: en }&#xa;&#x2022; { Scope: nexti-pageNotFound, Name: pageNotFound,&#xa;    Value: &quot;Str&#xe1;nka nenalezena&quot;, Language: de }&#xa;&#xa;Translators update en/de values via admin panel" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;size=15;" parent="mq-lane" vertex="1">
+                    <mxGeometry x="75" y="620" width="350" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="mq-save-to-example" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="mq-lane" source="mq-save" target="mq-example" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: API returns error -->
-        <mxCell id="fe-error" value="API returns ErrorOr error&#xa;{ code: &quot;auth-api-authService-invalidPassword&quot;,&#xa;  description: &quot;Neplatn&#233; heslo&quot; }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="100" y="380" width="360" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-api-to-error" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-api-call" target="fe-error">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- ========== CROSS-LANE ARROWS ========== -->
+                <mxCell id="arrow-fe-fetch-to-be" value="GET /api/lang/translations/scope/{scope}" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;fontStyle=2;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="fe-fetch-scope" target="be-scope-endpoint" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-be-to-fe-response" value="[{ name, value }, ...]" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;" parent="1" source="be-scope-endpoint" target="fe-fetch-scope" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-be-error-to-fe" value="422 / 404 JSON response&#xa;{ slug, message, correlationId }" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;exitX=0;exitY=0.4;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="be-api-response" target="fe-error" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-autocreate" value="POST /api/lang/translations&#xa;{ scope, name, value }&#xa;(fire-and-forget)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;fontStyle=2;fontSize=10;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" parent="1" source="fe-auto-create" target="be-trans-handlers" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-update" value="PUT" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;fontStyle=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="fe-update-trans" target="be-trans-handlers" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-list-langs" value="GET languages" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="fe-list-langs" target="be-lang-handlers" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-fe-list-scopes" value="GET scopes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="fe-list-scopes" target="be-scope-query" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-be-to-mq" value="publish" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;fontStyle=1;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="be-publish" target="mq-queue" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: Lookup translation -->
-        <mxCell id="fe-lookup" value="Lookup error.code in loaded translations&#xa;slug = &quot;auth-api-authService-invalidPassword&quot;&#xa;&#x2192; found: &quot;Neplatn&#233; heslo&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="110" y="465" width="340" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-error-to-lookup" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-error" target="fe-lookup">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- ========== LEGEND ========== -->
+                <mxCell id="legend-box" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;verticalAlign=top;fontStyle=1;fontSize=13;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="110" width="320" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-fe" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="145" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-fe-label" value="Frontend / Success" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="145" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-be" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="175" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-be-label" value="Backend API / Queries" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="175" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-cmd" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="205" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-cmd-label" value="Commands / Mutations" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="205" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-err" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="235" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-err-label" value="Errors / MassTransit events" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="235" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-pipe" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="265" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-pipe-label" value="Pipeline / Decisions / Storage" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="265" width="180" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-dashed" value="- - - - -" style="text;html=1;fontSize=11;fontColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="295" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-dashed-label" value="Response / async flow" style="text;html=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="295" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-notes" value="No JSON files on disk. No static middleware.&#xa;No manifest.json. No ETag cache.&#xa;&#xa;FE calls API by Scope &amp;rarr; gets [name, value].&#xa;Auto-creates missing translations via POST.&#xa;MassTransit consumer creates for other languages.&#xa;Key = Scope-Name = bridge between errors &amp;amp; translations." style="text;html=1;fontSize=10;fontStyle=2;fontColor=#666666;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="320" width="280" height="95" as="geometry"/>
+                </mxCell>
 
-        <!-- FE: Show to user -->
-        <mxCell id="fe-show" value="Display translated error message to user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="fe-lane">
-          <mxGeometry x="160" y="550" width="240" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-lookup-to-show" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="fe-lane" source="fe-lookup" target="fe-show">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+                <!-- ========== FEATURE FLAG ========== -->
+                <mxCell id="flag-box" value="Migration Strategy — Feature Flag" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;verticalAlign=top;fontStyle=1;fontSize=13;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="440" width="320" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="flag-desc" value="Feature flag: LangV2IsEnabled&#xa;&#xa;LangV2IsEnabled = false (default):&#xa;  &#x2022; Old module active (EF Core + SQL Server)&#xa;  &#x2022; Nexticz.Module.Lang.Presentation&#xa;  &#x2022; AddLangModule() / UseLangModule()&#xa;&#xa;LangV2IsEnabled = true:&#xa;  &#x2022; New module active (Marten + PostgreSQL)&#xa;  &#x2022; Nexticz.Module.Lang (this diagram)&#xa;  &#x2022; AddLangModuleV2() / UseLangModuleV2Async()&#xa;&#xa;Only ONE module is active at a time.&#xa;Old module stays untouched &amp;mdash; delete when V2 stable." style="text;html=1;fontSize=10;fontColor=#333333;align=left;spacingLeft=5;" parent="1" vertex="1">
+                    <mxGeometry x="1730" y="470" width="300" height="220" as="geometry"/>
+                </mxCell>
 
-        <!-- ====== FE: Admin CRUD Section ====== -->
-        <mxCell id="fe-admin-divider" value="" style="line;strokeWidth=2;strokeColor=#999999;" vertex="1" parent="fe-lane">
-          <mxGeometry x="30" y="630" width="500" height="10" as="geometry" />
-        </mxCell>
-        <mxCell id="fe-admin-label" value="Admin Panel (Translation Management)" style="text;html=1;fontSize=14;fontStyle=1;align=center;fontColor=#333333;" vertex="1" parent="fe-lane">
-          <mxGeometry x="100" y="650" width="340" height="25" as="geometry" />
-        </mxCell>
-
-        <!-- FE: List Languages -->
-        <mxCell id="fe-list-langs" value="GET /api/lang/languages&#xa;[Anonymous]&#xa;&#xa;List all languages (Cs, En, De...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="20" y="690" width="240" height="60" as="geometry" />
-        </mxCell>
-
-        <!-- FE: Toggle Language -->
-        <mxCell id="fe-toggle-lang" value="PUT /api/lang/languages/{shortcut}&#xa;[Authorized]&#xa;&#xa;{ isActive: true/false }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="280" y="690" width="250" height="60" as="geometry" />
-        </mxCell>
-
-        <!-- FE: List Section Slugs -->
-        <mxCell id="fe-list-sections" value="GET /api/lang/sections&#xa;[Authorized]&#xa;&#xa;Returns DISTINCT section slugs&#xa;[&quot;auth&quot;, &quot;lang&quot;, &quot;shared&quot;, &quot;mmo&quot;]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="20" y="780" width="240" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- FE: List Translations -->
-        <mxCell id="fe-list-trans" value="GET /api/lang/translations&#xa;[Anonymous]&#xa;&#xa;Paginated, filterable by&#xa;SectionSlug, LanguageShortcut, Slug" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="280" y="780" width="250" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- FE: Create Translations -->
-        <mxCell id="fe-create-trans" value="POST /api/lang/translations&#xa;[Anonymous]&#xa;&#xa;{ sectionSlug: &quot;auth&quot;,&#xa;  languageShortcut: &quot;Cs&quot;,&#xa;  items: [{ slug, value }, ...] }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=0;" vertex="1" parent="fe-lane">
-          <mxGeometry x="20" y="890" width="240" height="90" as="geometry" />
-        </mxCell>
-
-        <!-- FE: Update Translation -->
-        <mxCell id="fe-update-trans" value="PUT /api/lang/translations/{id}&#xa;[Authorized]&#xa;&#xa;{ value: &quot;New translation text&quot; }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="280" y="890" width="250" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- FE: Delete Translation -->
-        <mxCell id="fe-delete-trans" value="DELETE /api/lang/translations/{id}&#xa;[Authorized]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="fe-lane">
-          <mxGeometry x="280" y="975" width="250" height="40" as="geometry" />
-        </mxCell>
-
-        <!-- FE: Note about SectionSlug -->
-        <mxCell id="fe-section-note" value="Note: SectionSlug is a plain string&#xa;(e.g. &quot;auth&quot;, &quot;lang&quot;, &quot;shared&quot;, &quot;mmo-settings&quot;).&#xa;FE decides the section when creating translations.&#xa;No Section CRUD needed." style="text;html=1;fontSize=10;fontStyle=2;fontColor=#888888;align=left;" vertex="1" parent="fe-lane">
-          <mxGeometry x="20" y="1000" width="250" height="60" as="geometry" />
-        </mxCell>
-
-        <!-- ==================== BE API LAYER ==================== -->
-        <mxCell id="be-lane" value="Backend API (ASP.NET Minimal API)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;rounded=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="100" width="500" height="1650" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Static File Middleware -->
-        <mxCell id="be-static" value="Static File Middleware&#xa;&#xa;/translations/{lang}/{section}.json&#xa;served from wwwroot/translations/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="be-lane">
-          <mxGeometry x="100" y="50" width="300" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- BE: MediatR Pipeline -->
-        <mxCell id="be-mediatr" value="MediatR Pipeline&#xa;&#xa;Endpoint &#x2192; Command/Query &#x2192; Handler&#xa;&#x2192; LangPostCommandBehavior (auto-save)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="be-lane">
-          <mxGeometry x="50" y="160" width="400" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Language Handlers -->
-        <mxCell id="be-lang-handlers" value="Language Handlers&#xa;&#xa;CreateLanguageCommandHandler&#xa;UpdateLanguageCommandHandler&#xa;ListLanguagesQueryHandler&#xa;GetLanguageByShortcutQueryHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="be-lane">
-          <mxGeometry x="20" y="270" width="220" height="90" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Translation Handlers -->
-        <mxCell id="be-trans-handlers" value="Translation Handlers&#xa;&#xa;CreateTranslationsCommandHandler&#xa;UpdateTranslationCommandHandler&#xa;RemoveTranslationCommandHandler&#xa;ListTranslationsQueryHandler&#xa;GetTranslationByIdQueryHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="be-lane">
-          <mxGeometry x="260" y="270" width="220" height="105" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Section Slugs Query -->
-        <mxCell id="be-section-query" value="ListSectionSlugsQueryHandler&#xa;&#xa;SELECT DISTINCT SectionSlug&#xa;FROM Translations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="be-lane">
-          <mxGeometry x="120" y="400" width="260" height="60" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Marten Event Store -->
-        <mxCell id="be-marten" value="Marten (PostgreSQL)&#xa;Event Store + Document Projections&#xa;&#xa;Language aggregate&#xa;Translation aggregate (with SectionSlug string)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="be-lane">
-          <mxGeometry x="60" y="500" width="380" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Arrow MediatR to Marten -->
-        <mxCell id="be-handlers-to-marten" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="be-lane" source="be-trans-handlers" target="be-marten">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="be-langhandlers-to-marten" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="be-lane" source="be-lang-handlers" target="be-marten">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Publish MassTransit -->
-        <mxCell id="be-publish" value="Publish MassTransit message&#xa;&#xa;TranslationSectionChanged&#xa;{ SectionSlug, LanguageShortcut }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" vertex="1" parent="be-lane">
-          <mxGeometry x="100" y="620" width="300" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Arrow handlers to publish -->
-        <mxCell id="be-trans-to-publish" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="be-lane" source="be-marten" target="be-publish">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="be-publish-label" value="After Create / Update / Delete&#xa;translation command" style="text;html=1;fontSize=9;fontStyle=2;fontColor=#888888;" vertex="1" parent="be-lane">
-          <mxGeometry x="310" y="590" width="170" height="30" as="geometry" />
-        </mxCell>
-
-        <!-- BE: Seed -->
-        <mxCell id="be-seed" value="TranslationsSeed (Reflection-Based)&#xa;&#xa;Scans all assemblies for:&#xa;&#x2022; IErrorComponentSlugProvider&#xa;&#x2022; ITranslatable&#xa;&#xa;Groups by SectionSlug (module part of slug)&#xa;Creates translations via MediatR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d0de;strokeColor=#996185;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="be-lane">
-          <mxGeometry x="70" y="750" width="360" height="120" as="geometry" />
-        </mxCell>
-
-        <!-- ==================== RABBITMQ + CONSUMER LANE ==================== -->
-        <mxCell id="mq-lane" value="RabbitMQ + MassTransit Consumer" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=14;rounded=1;" vertex="1" parent="1">
-          <mxGeometry x="1180" y="100" width="500" height="1650" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: RabbitMQ Queue -->
-        <mxCell id="mq-queue" value="RabbitMQ Queue&#xa;&#xa;module-lang-translation-section-changed" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#f8cecc;strokeColor=#b85450;size=15;fontSize=11;fontStyle=1;" vertex="1" parent="mq-lane">
-          <mxGeometry x="130" y="50" width="240" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: Consumer -->
-        <mxCell id="mq-consumer" value="TranslationSectionChangedConsumer&#xa;&#xa;1. Check feature flag: LangJsonGenerationEnabled&#xa;2. If disabled &#x2192; skip (log trace)&#xa;3. If enabled &#x2192; call TranslationFileGenerator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="mq-lane">
-          <mxGeometry x="50" y="170" width="400" height="90" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: Arrow queue to consumer -->
-        <mxCell id="mq-queue-to-consumer" value="consume" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=2;fontSize=10;" edge="1" parent="mq-lane" source="mq-queue" target="mq-consumer">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: Feature Flag Decision -->
-        <mxCell id="mq-flag-check" value="LangJsonGenerationEnabled?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="mq-lane">
-          <mxGeometry x="140" y="300" width="220" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="mq-consumer-to-flag" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="mq-lane" source="mq-consumer" target="mq-flag-check">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: Skip -->
-        <mxCell id="mq-skip" value="Skip&#xa;(log trace)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;" vertex="1" parent="mq-lane">
-          <mxGeometry x="380" y="310" width="90" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="mq-flag-to-skip" value="false" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=2;fontSize=10;" edge="1" parent="mq-lane" source="mq-flag-check" target="mq-skip">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: File Generator -->
-        <mxCell id="mq-generator" value="TranslationFileGenerator.RegenerateAsync(sectionSlug, languageShortcut)&#xa;&#xa;1. Query Marten: WHERE SectionSlug = X AND LanguageShortcut = Y&#xa;2. Build dict: { slug: value }&#xa;3. Serialize to JSON&#xa;4. Write to wwwroot/translations/{lang}/{section}.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="mq-lane">
-          <mxGeometry x="50" y="400" width="400" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="mq-flag-to-gen" value="true" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=2;fontSize=10;" edge="1" parent="mq-lane" source="mq-flag-check" target="mq-generator">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: Output File -->
-        <mxCell id="mq-output" value="wwwroot/translations/&#xa;&#xa;cs/&#xa;  auth.json&#xa;  lang.json&#xa;  shared.json&#xa;  mmo-settings.json&#xa;en/&#xa;  auth.json&#xa;  lang.json&#xa;  ..." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;size=15;" vertex="1" parent="mq-lane">
-          <mxGeometry x="130" y="540" width="240" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="mq-gen-to-output" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="mq-lane" source="mq-generator" target="mq-output">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ: JSON content example -->
-        <mxCell id="mq-json-example" value="Example: cs/auth.json&#xa;&#xa;{&#xa;  &quot;auth-api-authService-invalidPassword&quot;: &quot;Neplatn&#233; heslo&quot;,&#xa;  &quot;auth-api-authService-validationTokenError&quot;: &quot;JWT token nen&#237; validn&#237;&quot;&#xa;}" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;size=15;" vertex="1" parent="mq-lane">
-          <mxGeometry x="100" y="730" width="300" height="100" as="geometry" />
-        </mxCell>
-
-        <!-- ==================== CROSS-LANE ARROWS ==================== -->
-
-        <!-- FE fetch JSON -> BE static middleware -->
-        <mxCell id="arrow-fe-to-static" value="GET /translations/cs/auth.json" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;fontStyle=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-fetch-json" target="be-static">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- BE static serves file back to FE -->
-        <mxCell id="arrow-static-to-fe" value="JSON response" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.8;entryDx=0;entryDy=0;" edge="1" parent="1" source="be-static" target="fe-fetch-json">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- FE create trans -> BE handler -->
-        <mxCell id="arrow-fe-create" value="POST /api/lang/translations" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;fontStyle=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-create-trans" target="be-trans-handlers">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- FE update trans -> BE handler -->
-        <mxCell id="arrow-fe-update" value="PUT" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;fontStyle=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-update-trans" target="be-trans-handlers">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- FE list langs -> BE handler -->
-        <mxCell id="arrow-fe-list-langs" value="GET languages" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-list-langs" target="be-lang-handlers">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- FE list sections -> BE handler -->
-        <mxCell id="arrow-fe-list-sections" value="GET sections" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=1;fontStyle=2;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-list-sections" target="be-section-query">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- BE publish -> RabbitMQ -->
-        <mxCell id="arrow-be-to-mq" value="publish" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;fontStyle=1;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="be-publish" target="mq-queue">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- MQ output -> BE static files (loop back) -->
-        <mxCell id="arrow-output-to-static" value="Files served by static middleware" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;dashed=1;fontStyle=2;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mq-output" target="be-static">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1170" y="820" />
-              <mxPoint x="1170" y="40" />
-              <mxPoint x="1090" y="40" />
-              <mxPoint x="1090" y="235" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- ==================== LEGEND ==================== -->
-        <mxCell id="legend-box" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;verticalAlign=top;fontStyle=1;fontSize=13;arcSize=6;" vertex="1" parent="1">
-          <mxGeometry x="1720" y="110" width="320" height="280" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-fe" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="145" width="30" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="legend-fe-label" value="Frontend / Static files" style="text;html=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1780" y="145" width="150" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-be" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="175" width="30" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="legend-be-label" value="Backend API / Queries" style="text;html=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1780" y="175" width="150" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-cmd" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="205" width="30" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="legend-cmd-label" value="Commands / Mutations" style="text;html=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1780" y="205" width="150" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-err" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="235" width="30" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="legend-err-label" value="Errors / MassTransit events" style="text;html=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1780" y="235" width="200" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-pipe" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="265" width="30" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="legend-pipe-label" value="Pipeline / Decisions" style="text;html=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1780" y="265" width="150" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend-nosection" value="No Section entity/table.&#xa;SectionSlug is a plain string on Translation.&#xa;Sections derived via DISTINCT query." style="text;html=1;fontSize=10;fontStyle=2;fontColor=#666666;align=left;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="305" width="280" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- ==================== DATA MODEL BOX ==================== -->
-        <mxCell id="model-box" value="Data Model (Marten Aggregates)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;verticalAlign=top;fontStyle=1;fontSize=13;arcSize=6;" vertex="1" parent="1">
-          <mxGeometry x="1720" y="420" width="320" height="340" as="geometry" />
-        </mxCell>
-
-        <mxCell id="model-lang" value="Language&#xa;&#xa;Id (Guid)&#xa;Name (string)&#xa;Shortcut (string) [unique]&#xa;IsActive (bool)&#xa;CreatedAt (DateTimeOffset)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;size=15;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="455" width="280" height="120" as="geometry" />
-        </mxCell>
-
-        <mxCell id="model-trans" value="Translation&#xa;&#xa;Id (Guid)&#xa;Module, Feature, Component, Name (string)&#xa;Slug (string) [indexed]&#xa;Value (string)&#xa;LanguageShortcut (string) [indexed]&#xa;SectionSlug (string) [indexed] &amp;larr; plain string!&#xa;CreatedAt, UpdatedAt" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;size=15;" vertex="1" parent="1">
-          <mxGeometry x="1740" y="590" width="280" height="150" as="geometry" />
-        </mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
+                <!-- ========== DATA MODEL ========== -->
+                <mxCell id="model-box" value="Data Model (Marten Aggregates)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;verticalAlign=top;fontStyle=1;fontSize=13;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="720" width="320" height="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="model-lang" value="Language&#xa;&#xa;Id (Guid)&#xa;Name (string)&#xa;Shortcut (string) [unique]&#xa;IsActive (bool)&#xa;CreatedAt (DateTimeOffset)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="755" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="model-trans" value="Translation&#xa;&#xa;Id (Guid)&#xa;Name (string)           e.g. &quot;pageNotFound&quot;&#xa;Scope (string) [indexed] e.g. &quot;nexti-pageNotFound&quot;&#xa;Key (string)             e.g. &quot;nexti-pageNotFound-pageNotFound&quot;&#xa;Value (string)           e.g. &quot;Str&#xe1;nka nenalezena&quot;&#xa;Language (string) [indexed]  e.g. &quot;cz&quot;&#xa;CreatedAt, UpdatedAt&#xa;&#xa;UniqueIndex: Key + Language&#xa;Index: Scope | Language" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="1740" y="890" width="280" height="190" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="QrNgmBLK46B74whApwkP" name="Flows">
+        <mxGraphModel dx="1751" dy="1139" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="qeX5KMuyyc8RJneG24Ho-1" value="1. nahrani" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="230" width="120" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
